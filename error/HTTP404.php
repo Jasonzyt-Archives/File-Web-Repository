@@ -26,7 +26,7 @@
                     <!-- <img src="" alt="logo"> -->
                     <span>SKYTown</span>
                 </div>
-            </div> 
+            </div>
         </div>
     </nav>
     <section class="services-section spad">
@@ -38,6 +38,7 @@
         </div>
     </section>
     <footer>
+        <p><?php include 'Edition'; ?></p>
         <p>Copyright ©2020</p>
         <p>SKYTown Server All Rights Reserved.</p>
         <p>Power By PluginKers & JasonZYT</p>

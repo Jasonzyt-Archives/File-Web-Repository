@@ -240,6 +240,11 @@ nav ul li a:hover nav ul li.current a {
     white-space: nowrap;
 }
 
+
+/*#dir-list .row span {
+    display: inline-block !important
+}*/
+
 .file-info-button,
 .web-link-button {
     display: inline-block;

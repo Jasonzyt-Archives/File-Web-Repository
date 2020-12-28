@@ -101,7 +101,8 @@
         </div>
     </section>
     <footer>
-        <p>Copyright ©2020 Ver1.0.2</p>
+        <p><?php include 'Edition'; ?></p>
+        <p>Copyright ©2020</p>
         <p>SKYTown Server All Rights Reserved.</p>
         <p>Power By PluginKers & JasonZYT</p>
         <p id="hitokoto"></p>

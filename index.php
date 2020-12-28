@@ -103,6 +103,20 @@
             </div>
             <ul id="dir-list" class="nav nav-pills nav-stacked">
                 <?php
+                function getLine($file, $line, $length = 4096){
+                    $returnTxt = null; 
+                    $i = 1; 
+                    $handle = @fopen($file, "r");
+                    if ($handle) {
+                        while (!feof($handle)) {
+                            $buffer = fgets($handle, $length);
+                            if($line == $i) $returnTxt = $buffer;
+                            $i++;
+                        }
+                        fclose($handle);
+                    }
+                    return $returnTxt;
+                }                
                 function getFileSizeStr($fileSize) {
                     if ($fileSize >= 1024 && $fileSize < 1048576)
                     {
@@ -186,7 +200,7 @@
                             $FE=="webp"||$FE=="pdf"||$FE=="ppt"||$FE=="pptx"||$FE=="pptm"||$FE=="potx"||$FE=="potm"||$FE=="pot"||$FE=="ppsx"||$FE=="ppsm"||
                             $FE=="ppa"||$FE=="ppam"||$FE=="zip"||$FE=="xml"||$FE=="ini"||$FE=="cfg"||$FE=="config"||$FE=="conf"||$FE=="propreties"||$FE=="ipa"||
                             $FE=="plist"||$FE=="applescript"||$FE=="ps1"||$FE=="bat"||$FE=="sh"||$FE=="bash"||$FE=="html"||$FE=="htm"||$FE=="dll"||$FE=="lib"||
-                            $FE=="txt"||$FE="gitignore"
+                            $FE=="txt"||$FE=="gitignore"
                             ) {
                                 echo <<<EOF
                                     <li data-name="$file" data-href="?dir=$inDir/$file">
@@ -208,15 +222,16 @@
                                 EOF;
                             }
                             elseif ($FE == "url") {
-                                $urlFile = file($dir . "/" . $file);
-                                $url = $urlFile[1];
+                                $url = getLine($dir . "/" . $file,1);
+                                $urlArray = parse_url($url);
+                                $displayUrl = $urlArray["host"] . $urlArray["path"];
                                 echo <<<EOF
                                     <li data-name="$file" data-href="?dir=$inDir/$file">
                                         <a href="$url" class="clearfix" data-name="$file">
                                             <div class="row">
                                                 <span class="file-name col-md-7 col-sm-6 col-xs-9">
                                                     <svg><use xlink:href="#Url"/></svg>
-                                                    $file
+                                                    $displayUrl
                                                 </span>
                                                 <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
                                                     -
@@ -258,7 +273,10 @@
         </div>
     </section>
     <footer>
-        <p>Copyright ©2020 Ver1.0.2</p>
+        <p>
+            <?php include 'Edition'; ?>
+        </p>
+        <p>Copyright ©2020</p>
         <p>SKYTown Server All Rights Reserved.</p>
         <p>Power By PluginKers & JasonZYT</p>
         <p id="hitokoto"></p>
