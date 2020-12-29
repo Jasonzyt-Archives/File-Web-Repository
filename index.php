@@ -1,20 +1,70 @@
 <html lang="zh-CN">
 
 <head>
+    <?php
+    if (!file_exists('HEAD.json')) {
+        $array = array(
+            'title' => 'File Repository',
+            'icon' => './assets/img/icon.ico',
+            'meta' => array(
+                'description' => 'File-Repository',
+                'keywords' => 'File-Repository,Webdisk'
+            )
+        );
+    }
+    else {
+        $json = json_decode(file_get_contents("HEAD.json"),true);
+        if (isset($json['title'])) {
+            $json_t = $json['title'];
+        }
+        else {
+            $json_t = 'File Repository';
+        }
+        if (isset($json['icon'])) {
+            $json_i = $json['icon'];
+        }
+        else {
+            $json_i = './assets/img/icon.ico';
+        }
+        if (isset($json['meta']['description'])) {
+            $json_d = $json['meta']['description'];
+        }
+        else {
+            $json_d = 'File-Repository';
+        }
+        if (isset($json['meta']['keywords'])) {
+            $json_k = $json['meta']['keywords'];
+        }
+        else {
+            $json_k = 'File-Repository,Webdisk';
+        }
+        $array = array(
+            'title' => $json_t,
+            'icon' => $json_i,
+            'meta' => array(
+                'description' => $json_d,
+                'keywords' => $json_k
+            )
+        );
+    }
+    $title = $array['title'];
+    $description = $array['meta']['description'];
+    $keywords = $array['meta']['keywords'];
+    $icon = $array['icon'];
+    ?>
     <!-- META -->
     <meta charset="UTF-8" />
-    <meta name="description" content="SKYTown Server文件仓库" />
-    <meta name="keywords" content="File,Repository,SKYTown,JasonZYT" />
+    <meta name="description" content=<?php echo '"' . $description . '"';?> />
+    <meta name="keywords" content=<?php echo '"' . $keywords . '"';?> />
     <meta name="author" content="JasonZYT&PluginKers" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- TITLE -->
-    <title>SKYTown - File Repository</title>
+    <title><?php echo $title;?></title>
     <!-- ICON -->
-    <link href="assets/img/icon.ico" rel="shortcut icon">
+    <link href=<?php echo '"' . $icon . '"';?> rel="shortcut icon">
     <link rel="bookmark" href="assets/img/icon.ico" />
     <!-- LINK-CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/css/font.css">
     <link rel="stylesheet" href="assets/css/style.min.css">
 </head>
