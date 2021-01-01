@@ -106,7 +106,7 @@
     </section>
     <footer>
         <p><?php include 'Edition'; ?></p>
-        <p>Copyright ©2020</p>
+        <p>Copyright ©2020-2021</p>
         <p>SKYTown Server All Rights Reserved.</p>
         <p>Power By JasonZYT</p>
         <p id="hitokoto"></p>

@@ -80,7 +80,7 @@
                 </div>
                 <ul class="nav-menu">
                     <?php
-					function convertUrlQuery($query)
+					function convertUriQuery($query)
 			        {
 				        $queryParts = explode('&', $query);
 				        $params = array();
@@ -93,10 +93,10 @@
 			        $host = $_SERVER['HTTP_HOST'];
 			        $lic = $_SERVER['REQUEST_SCHEME'];
 			        $port = $_SERVER['SERVER_PORT'];
-			        $url = $lic . "://" . $host;
-			        $query = $_SERVER['QUERY_STRING'];
-			        $parUrl = convertUrlQuery($query);
-                    $parameter3 = urldecode($parUrl["dir"]);
+			        $uri = $lic . "://" . $host;
+                    $query = $_SERVER['QUERY_STRING'];
+			        $parUri = convertUriQuery($query);
+                    $parameter3 = urldecode($parUri["dir"]);
                     $parameter2 = str_replace("\\","/",$parameter3);
                     $parameter1 = str_replace("//","/",$parameter2);
                     $parLen1 = mb_strlen($parameter1);
@@ -119,7 +119,7 @@
 				        echo '<li><a href="#">首页</a></li>';
                     }
 			        else {
-                        echo '<li><a href="' . $url . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
+                        echo '<li><a href="' . $uri . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
 				        for ($i=0;$i<=$parLen-1;$i++) {
 				    	    if (mb_substr($parameter,$i,1)=="/") {
                                 $dir = mb_substr($parameter,0,$i);
@@ -132,7 +132,7 @@
                                 $lastSlashPos = mb_strrpos($dirSlash,"/");
                                 $dirLen = mb_strlen($dirSlash);
                                 $dirName = mb_substr($dirSlash,$lastSlashPos+1,$dirLen-1);
-				    		    echo '<li><a href="' . $url . '/index.php?dir=' . $dir . '">' . $dirName . '</a><svg><use xlink:href="#AngleBracket-R"></use></svg></li>';
+				    		    echo '<li><a href="' . $uri . '/index.php?dir=' . $dir . '">' . $dirName . '</a><svg><use xlink:href="#AngleBracket-R"></use></svg></li>';
                             }
                         }
 				    	echo '<li><a style="color:#707070;">' . $currentDirName . '</a></li>';
@@ -153,6 +153,11 @@
             </div>
             <ul id="dir-list" class="nav nav-pills nav-stacked">
                 <?php
+                function isEmptyFolder($path)
+                {
+                    $array = array_diff(scandir($path),array('..','.'));
+                    return empty($array);
+                }
                 function getLine($file, $line, $length = 4096){
                     $returnTxt = null; 
                     $i = 1; 
@@ -170,15 +175,15 @@
                 function getFileSizeStr($fileSize) {
                     if ($fileSize >= 1024 && $fileSize < 1048576)
                     {
-                        return $fileSize / 1024 . "KB";
+                        return round($fileSize / 1024,1) . "KB";
                     }
                     else if ($fileSize >= 1048576 && $fileSize < 1073741824)
                     {
-                        return $fileSize / 1048576 . "MB";
+                        return round($fileSize / 1048576,1) . "MB";
                     }
                     else if ($fileSize >=1073741824  && $fileSize < 1099511627776)
                     {  
-                        return $fileSize / 1073741824 . "GB";
+                        return round($fileSize / 1073741824,2) . "GB";
                     }
                     else
                     {
@@ -187,21 +192,135 @@
                 }
                 function ergodicDir($inDir) {
                     $dir = "./Filedir/" . $inDir;
-                    $files = scandir($dir); 
-                    foreach ($files as $file)
-                    {
-                        if ($file=='.'||$file=='..') {continue;}
+                    $files = array_diff(scandir($dir),array('..','.'));
+                    $filesArray = array(
+                            "DIR" => array(),
+                            "FILE" => array()
+                    );
+                    foreach ($files as $file) {
+                        if (is_dir($dir . "/" . $file)) {
+                            array_push($filesArray["DIR"],$file);
+                        }
+                        else {
+                            array_push($filesArray["FILE"],$file);
+                        }
+                    }
+                    foreach ($filesArray["DIR"] as $file) {
                         $lastEditTimeStamp = filemtime ($dir . '/' . $file);
                         $lastEditTime = date("Y-m-d H:i:s",$lastEditTimeStamp);
-                        if (is_dir($dir . '/' . $file)) {
-                            if ($inDir == "") {
+                        if ($inDir == "") {
+                            echo <<<EOF
+                                <li data-name="$file" data-href="?dir=$file">
+                                    <a href="?dir=$file" class="clearfix" data-name="$file">
+                                        <div class="row">
+                                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                                <svg><use xlink:href="#Folder"/></svg>
+                                                $file
+                                            </span>
+                                            <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
+                                                -
+                                            </span>
+                                            <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
+                                                $lastEditTime
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+EOF;
+                        }
+                        else {
+                            echo <<<EOF
+                                <li data-name="$file" data-href="?dir=$inDir/$file">
+                                    <a href="?dir=$inDir/$file" class="clearfix" data-name="$file">
+                                        <div class="row">
+                                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                                <svg><use xlink:href="#Folder"/></svg>
+                                                $file
+                                            </span>
+                                            <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
+                                                -
+                                            </span>
+                                            <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
+                                                $lastEditTime
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+EOF;
+                        }
+                    }
+                    foreach ($filesArray["FILE"] as $file) {
+                        $lastEditTimeStamp = filemtime ($dir . '/' . $file);
+                        $lastEditTime = date("Y-m-d H:i:s",$lastEditTimeStamp);
+                        $fileSize = filesize($dir . "/" . $file);
+                        $FS = getFileSizeStr($fileSize);
+                        $FE2 = mb_substr(mb_strrchr($file, '.'), 1);
+                        $FE = mb_strtolower($FE2);
+                        if ( // 处理拓展名区分大小写的文件(Linux)
+                        $FE2 == "C"
+                        ) {
+                            echo <<<EOF
+                                <li data-name="$file" data-href="?dir=$inDir/$file">
+                                    <a href="$dir/$file" class="clearfix" data-name="$file">
+                                        <div class="row">
+                                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                                <svg><use xlink:href="#.$FE2"/></svg>
+                                                $file
+                                            </span>                                                <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
+                                                 $FS
+                                            </span>
+                                            <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
+                                                $lastEditTime
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+EOF;
+                        }
+                        elseif ( // 其他文件
+                        $FE=="c"||$FE=="i"||$FE=="s"||$FE=="o"||$FE=="out"||$FE=="cxx"||$FE=="cc"||$FE=="c++"||$FE=="C"||$FE=="cpp"||
+                        $FE=="inl"||$FE=="hpp"||$FE=="hxx"||$FE=="h++"||$FE=="h"||$FE=="cs"||$FE=="aspx"||$FE=="resx"||$FE=="json"||$FE=="md"||
+                        $FE=="py"||$FE=="pyo"||$FE=="pyw"||$FE=="pyc"||$FE=="pyd"||$FE=="php"||$FE=="phps"||$FE=="lua"||$FE=="go"||$FE=="sln"||
+                        $FE=="ttf"||$FE=="otf"||$FE=="woff"||$FE=="woff2"||$FE=="eot"||$FE=="apk"||$FE=="xapk"||$FE=="css"||$FE=="less"||$FE=="js"||
+                        $FE=="exe"||$FE=="log"||$FE=="doc"||$FE=="docx"||$FE=="docm"||$FE=="dot"||$FE=="dotx"||$FE=="dotm"||$FE=="jpg"||$FE=="png"||
+                        $FE=="jpeg"||$FE=="bmp"||$FE=="gif"||$FE=="tif"||$FE=="pcx"||$FE=="tga"||$FE=="exif"||$FE=="fpx"||$FE=="ai"||$FE=="raw"||
+                        $FE=="webp"||$FE=="pdf"||$FE=="ppt"||$FE=="pptx"||$FE=="pptm"||$FE=="potx"||$FE=="potm"||$FE=="pot"||$FE=="ppsx"||$FE=="ppsm"||
+                        $FE=="ppa"||$FE=="ppam"||$FE=="zip"||$FE=="xml"||$FE=="ini"||$FE=="cfg"||$FE=="config"||$FE=="conf"||$FE=="propreties"||$FE=="ipa"||
+                        $FE=="plist"||$FE=="applescript"||$FE=="ps1"||$FE=="bat"||$FE=="sh"||$FE=="bash"||$FE=="html"||$FE=="htm"||$FE=="dll"||$FE=="lib"||
+                        $FE=="txt"||$FE=="gitignore"||$FE=="mcpack"||$FE=="mcaddon"||$FE=="mcworld"||$FE=="cer"||$FE=="p12"||$FE=="p7b"||$FE=="pfx"||$FE=="sst"
+                        ) {
+                            echo <<<EOF
+                                <li data-name="$file" data-href="?dir=$inDir/$file">
+                                    <a href="$dir/$file" class="clearfix" data-name="$file">
+                                        <div class="row">
+                                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                                <svg><use xlink:href="#.$FE"/></svg>
+                                                $file
+                                            </span>
+                                            <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
+                                                $FS
+                                            </span>
+                                            <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
+                                                $lastEditTime
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
+EOF;
+                        }
+                        elseif ($FE == "url") { // 处理URL文件
+                            $uri = getLine($dir . "/" . $file,1);
+                            $displayName = getLine($dir . "/" . $file,2);
+                            if ($displayName == null) {
+                                $uriArray = parse_uri($uri);
+								$displayUri = $uriArray["host"] . $uriArray["path"];
                                 echo <<<EOF
-                                    <li data-name="$file" data-href="?dir=$file">
-                                        <a href="?dir=$file" class="clearfix" data-name="$file">
+                                    <li data-name="$file" data-href="?dir=$inDir/$file">
+                                        <a href="$uri" class="clearfix" data-name="$file">
                                             <div class="row">
                                                 <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                    <svg><use xlink:href="#Folder"/></svg>
-                                                    $file
+                                                    <svg><use xlink:href="#Uri"/></svg>
+                                                    $displayUri
                                                 </span>
                                                 <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
                                                     -
@@ -217,11 +336,11 @@ EOF;
                             else {
                                 echo <<<EOF
                                     <li data-name="$file" data-href="?dir=$inDir/$file">
-                                        <a href="?dir=$inDir/$file" class="clearfix" data-name="$file">
+                                        <a href="$uri" class="clearfix" data-name="$file">
                                             <div class="row">
                                                 <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                    <svg><use xlink:href="#Folder"/></svg>
-                                                    $file
+                                                    <svg><use xlink:href="#Uri"/></svg>
+                                                    $displayName
                                                 </span>
                                                 <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
                                                     -
@@ -235,135 +354,34 @@ EOF;
 EOF;
                             }
                         }
-                        else {
-                            $fileSize = filesize($dir . "/" . $file);
-                            $FS = getFileSizeStr($fileSize);
-                            $FE2 = mb_substr(mb_strrchr($file, '.'), 1);
-                            if ( // 处理拓展名区分大小写的文件(Linux)
-                            $FE2 == "C"
-                            ) {
-                                echo <<<EOF
-                                    <li data-name="$file" data-href="?dir=$inDir/$file">
-                                        <a href="$dir/$file" class="clearfix" data-name="$file">
-                                            <div class="row">
-                                                <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                    <svg><use xlink:href="#.$FE2"/></svg>
-                                                    $file
-                                                </span>
-                                                <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
-                                                    $FS
-                                                </span>
-                                                <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
-                                                    $lastEditTime
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </li>
+                        else { // 处理未知(无图标)文件
+                            echo <<<EOF
+                                <li data-name="$file" data-href="?dir=$inDir/$file">
+                                    <a href="$dir/$file" class="clearfix" data-name="$file">
+                                        <div class="row">
+                                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                                <svg><use xlink:href="#Unknown"/></svg>
+                                                $file
+                                            </span>
+                                            <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
+                                                $FS
+                                            </span>
+                                            <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
+                                                $lastEditTime
+                                            </span>
+                                        </div>
+                                    </a>
+                                </li>
 EOF;
-                            }
-                            $FE = mb_strtolower($FE2);
-                            if ( // 其他文件
-                            $FE=="c"||$FE=="i"||$FE=="s"||$FE=="o"||$FE=="out"||$FE=="cxx"||$FE=="cc"||$FE=="c++"||$FE=="C"||$FE=="cpp"||
-                            $FE=="inl"||$FE=="hpp"||$FE=="hxx"||$FE=="h++"||$FE=="h"||$FE=="cs"||$FE=="aspx"||$FE=="resx"||$FE=="json"||$FE=="md"||
-                            $FE=="py"||$FE=="pyo"||$FE=="pyw"||$FE=="pyc"||$FE=="pyd"||$FE=="php"||$FE=="phps"||$FE=="lua"||$FE=="go"||$FE=="sln"||
-                            $FE=="ttf"||$FE=="otf"||$FE=="woff"||$FE=="woff2"||$FE=="eot"||$FE=="apk"||$FE=="xapk"||$FE=="css"||$FE=="less"||$FE=="js"||
-                            $FE=="exe"||$FE=="log"||$FE=="doc"||$FE=="docx"||$FE=="docm"||$FE=="dot"||$FE=="dotx"||$FE=="dotm"||$FE=="jpg"||$FE=="png"||
-                            $FE=="jpeg"||$FE=="bmp"||$FE=="gif"||$FE=="tif"||$FE=="pcx"||$FE=="tga"||$FE=="exif"||$FE=="fpx"||$FE=="ai"||$FE=="raw"||
-                            $FE=="webp"||$FE=="pdf"||$FE=="ppt"||$FE=="pptx"||$FE=="pptm"||$FE=="potx"||$FE=="potm"||$FE=="pot"||$FE=="ppsx"||$FE=="ppsm"||
-                            $FE=="ppa"||$FE=="ppam"||$FE=="zip"||$FE=="xml"||$FE=="ini"||$FE=="cfg"||$FE=="config"||$FE=="conf"||$FE=="propreties"||$FE=="ipa"||
-                            $FE=="plist"||$FE=="applescript"||$FE=="ps1"||$FE=="bat"||$FE=="sh"||$FE=="bash"||$FE=="html"||$FE=="htm"||$FE=="dll"||$FE=="lib"||
-                            $FE=="txt"||$FE=="gitignore"||$FE=="mcpack"||$FE=="mcaddon"||$FE=="mcworld"||$FE=="cer"||$FE=="p12"||$FE=="p7b"||$FE=="pfx"||$FE=="sst"
-                            ) {
-                                echo <<<EOF
-                                    <li data-name="$file" data-href="?dir=$inDir/$file">
-                                        <a href="$dir/$file" class="clearfix" data-name="$file">
-                                            <div class="row">
-                                                <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                    <svg><use xlink:href="#.$FE"/></svg>
-                                                    $file
-                                                </span>
-                                                <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
-                                                    $FS
-                                                </span>
-                                                <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
-                                                    $lastEditTime
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </li>
-EOF;
-                            }
-                            elseif ($FE == "url") { // 处理URL文件
-                                $url = getLine($dir . "/" . $file,1);
-                                $displayName = getLine($dir . "/" . $file,2);
-                                if ($displayName == null) {
-                                    $displayHost = parse_url($url,PHP_URL_HOST);
-									$diaplayPath = parse_url($url,PHP_URL_PATH);
-									$displayUrl = $displayHost . $displayPath;
-                                    echo <<<EOF
-                                        <li data-name="$file" data-href="?dir=$inDir/$file">
-                                            <a href="$url" class="clearfix" data-name="$file">
-                                                <div class="row">
-                                                    <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                        <svg><use xlink:href="#Url"/></svg>
-                                                        $displayUrl
-                                                    </span>
-                                                    <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
-                                                        -
-                                                    </span>
-                                                    <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
-                                                        $lastEditTime
-                                                    </span>
-                                                </div>
-                                            </a>
-                                        </li>
-EOF;
-                                }
-                                else {
-                                    echo <<<EOF
-                                        <li data-name="$file" data-href="?dir=$inDir/$file">
-                                            <a href="$url" class="clearfix" data-name="$file">
-                                                <div class="row">
-                                                    <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                        <svg><use xlink:href="#Url"/></svg>
-                                                        $displayName
-                                                    </span>
-                                                    <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
-                                                        -
-                                                    </span>
-                                                    <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
-                                                        $lastEditTime
-                                                    </span>
-                                                </div>
-                                            </a>
-                                        </li>
-EOF;
-                                }
-                            }
-                            else { // 处理未知(无图标)文件
-                                echo <<<EOF
-                                    <li data-name="$file" data-href="?dir=$inDir/$file">
-                                        <a href="$dir/$file" class="clearfix" data-name="$file">
-                                            <div class="row">
-                                                <span class="file-name col-md-7 col-sm-6 col-xs-9">
-                                                    <svg><use xlink:href="#Unknown"/></svg>
-                                                    $file
-                                                </span>
-                                                <span class="file-size col-md-2 col-sm-2 col-xs-3 text-right">
-                                                    $FS
-                                                </span>
-                                                <span class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">
-                                                    $lastEditTime
-                                                </span>
-                                            </div>
-                                        </a>
-                                    </li>
-EOF;
-                            }
                         }
                     }
-				}
-                ergodicDir($parameter);
+                }
+                if (isEmptyFolder("./Filedir/" . $parameter)) {
+                    echo '<h1 style="text-align: center;font-family: BlackItalic;">This is an empty folder</h1>';
+                }
+                else {
+                    ergodicDir($parameter);
+                }
                 ?>
             </ul>
         </div>
@@ -372,7 +390,7 @@ EOF;
         <p>
             <?php include 'Edition'; ?>
         </p>
-        <p>Copyright ©2020</p>
+        <p>Copyright ©2020-2021</p>
         <p>SKYTown Server All Rights Reserved.</p>
         <p>Power By JasonZYT</p>
         <p id="hitokoto"></p>
