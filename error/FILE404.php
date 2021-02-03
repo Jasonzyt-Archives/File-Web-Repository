@@ -61,12 +61,12 @@
     <!-- TITLE -->
     <title><?php echo $title;?></title>
     <!-- ICON -->
-    <link href=<?php echo '"' . $icon . '"';?> rel="shortcut icon">
+    <link  rel="shortcut icon" href=<?php echo '"' . $icon . '"';?>>
     <link rel="bookmark" href=<?php echo '"' . $icon . '"';?> />
     <!-- LINK-CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/font.css">
-    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/font.css">
+    <link rel="stylesheet" href="../assets/css/style.min.css">
 </head>
 
 <body style="overflow: visible;background:#f6f6f6;">
@@ -88,12 +88,15 @@
 					        $item = explode('=', $param);
 					        $params[$item[0]] = $item[1];
 				        }
-				    return $params;
+				        return $params;
 			        }
 			        $host = $_SERVER['HTTP_HOST'];
 			        $lic = $_SERVER['REQUEST_SCHEME'];
 			        $port = $_SERVER['SERVER_PORT'];
-			        $url = $lic . "://" . $host;
+                    $urlpath = $_SERVER['REQUEST_URI'];
+                    $urlpathmy = mb_substr($urlpath, mb_strpos($urlpath,"/error"),mb_strlen($urlpath));
+                    $urlpath = str_replace($urlpathmy, "", $urlpath);
+			        $url = $lic . "://" . $host . $urlpath;
 			        $query = $_SERVER['QUERY_STRING'];
 			        $parUrl = convertUrlQuery($query);
                     $parameter3 = urldecode($parUrl["dir"]);
@@ -113,7 +116,7 @@
                         $currentDirName = $parameter;
                     }
                     if ($parLen==0) {
-				        echo '<li><a href="#">首页</a></li>';
+				        echo '<li><a href="">首页</a></li>';
                     }
 			        else {
                         echo '<li><a href="' . $url . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';

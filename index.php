@@ -61,7 +61,7 @@
     <!-- TITLE -->
     <title><?php echo $title;?></title>
     <!-- ICON -->
-    <link href=<?php echo '"' . $icon . '"';?> rel="shortcut icon">
+    <link  rel="shortcut icon" href=<?php echo '"' . $icon . '"';?>>
     <link rel="bookmark" href=<?php echo '"' . $icon . '"';?> />
     <!-- LINK-CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -80,20 +80,23 @@
                 </div>
                 <ul class="nav-menu">
                     <?php
-					function convertUriQuery($query)
-			        {
-				        $queryParts = explode('&', $query);
-				        $params = array();
-				        foreach ($queryParts as $param) {
-					        $item = explode('=', $param);
-					        $params[$item[0]] = $item[1];
-				        }
-				    return $params;
-			        }
+                    function convertUriQuery($query)
+                    {
+                        $queryParts = explode('&', $query);
+                        $params = array();
+                        foreach ($queryParts as $param) {
+                            $item = explode('=', $param);
+                            $params[$item[0]] = $item[1];
+                        }
+                    return $params;
+                    }
 			        $host = $_SERVER['HTTP_HOST'];
 			        $lic = $_SERVER['REQUEST_SCHEME'];
 			        $port = $_SERVER['SERVER_PORT'];
-			        $uri = $lic . "://" . $host;
+			        $urlpath = $_SERVER['REQUEST_URI'];
+                    $urlpathmy = mb_substr($urlpath, mb_strpos($urlpath,"/"),mb_strlen($urlpath));
+                    $urlpath = str_replace($urlpathmy, "", $urlpath);
+                    $url = $lic . "://" . $host . $urlpath;
                     $query = $_SERVER['QUERY_STRING'];
 			        $parUri = convertUriQuery($query);
                     $parameter3 = urldecode($parUri["dir"]);
@@ -116,7 +119,7 @@
                         echo '<script language="javascript"> window.location.href="error/FILE404.php?dir=' . $parameter . '"</script>';
                     }
                     if ($parLen==0) {
-				        echo '<li><a href="#">首页</a></li>';
+				        echo '<li><a href="">首页</a></li>';
                     }
 			        else {
                         echo '<li><a href="' . $uri . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
@@ -291,7 +294,7 @@ EOF;
                         ) {
                             echo <<<EOF
                                 <li data-name="$file" data-href="?dir=$inDir/$file">
-                                    <a href="$dir/$file" class="clearfix" data-name="$file">
+                                    <a href="$dir$file" class="clearfix" data-name="$file">
                                         <div class="row">
                                             <span class="file-name col-md-7 col-sm-6 col-xs-9">
                                                 <svg><use xlink:href="#.$FE"/></svg>
@@ -357,7 +360,7 @@ EOF;
                         else { // 处理未知(无图标)文件
                             echo <<<EOF
                                 <li data-name="$file" data-href="?dir=$inDir/$file">
-                                    <a href="$dir/$file" class="clearfix" data-name="$file">
+                                    <a href="$dir$file" class="clearfix" data-name="$file">
                                         <div class="row">
                                             <span class="file-name col-md-7 col-sm-6 col-xs-9">
                                                 <svg><use xlink:href="#Unknown"/></svg>
