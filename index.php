@@ -294,7 +294,7 @@ EOF;
                         ) {
                             echo <<<EOF
                                 <li data-name="$file" data-href="?dir=$inDir/$file">
-                                    <a href="$dir$file" class="clearfix" data-name="$file">
+                                    <a href="$dir/$file" class="clearfix" data-name="$file">
                                         <div class="row">
                                             <span class="file-name col-md-7 col-sm-6 col-xs-9">
                                                 <svg><use xlink:href="#.$FE"/></svg>
@@ -360,7 +360,7 @@ EOF;
                         else { // 处理未知(无图标)文件
                             echo <<<EOF
                                 <li data-name="$file" data-href="?dir=$inDir/$file">
-                                    <a href="$dir$file" class="clearfix" data-name="$file">
+                                    <a href="$dir/$file" class="clearfix" data-name="$file">
                                         <div class="row">
                                             <span class="file-name col-md-7 col-sm-6 col-xs-9">
                                                 <svg><use xlink:href="#Unknown"/></svg>
