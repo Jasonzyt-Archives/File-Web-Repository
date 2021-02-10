@@ -122,7 +122,7 @@
 				        echo '<li><a href="">首页</a></li>';
                     }
 			        else {
-                        echo '<li><a href="' . $uri . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
+                        echo '<li><a href="' . $url . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
 				        for ($i=0;$i<=$parLen-1;$i++) {
 				    	    if (mb_substr($parameter,$i,1)=="/") {
                                 $dir = mb_substr($parameter,0,$i);

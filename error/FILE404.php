@@ -116,7 +116,7 @@
                         $currentDirName = $parameter;
                     }
                     if ($parLen==0) {
-				        echo '<li><a href="">首页</a></li>';
+				        echo '<li><a href="' . $url . '/index.php">首页</a></li>';
                     }
 			        else {
                         echo '<li><a href="' . $url . '/index.php">首页</a><svg><use xlink:href="#AngleBracket-R" /></svg></li>';
