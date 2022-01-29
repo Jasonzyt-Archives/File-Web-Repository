@@ -105,7 +105,7 @@ EOT;
             goto footer;
         }
         ?>
-        <iframe src="https://docs.google.com/viewer?url=<?php echo getFullHostName() . getFileDir() . $path; ?>&embedded=true" style="width:100%;height:100%;"></iframe>
+        <iframe src="http://www.xdocin.com/xdoc?_func=to&_format=html&_cache=1&_xdoc=<?php echo getFullHostName() . getFileDir() . $path; ?>&embedded=true" style="width:100%;height:100%;"></iframe>
     </section>
     <?php
     footer:
