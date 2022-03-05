@@ -19,7 +19,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Montserrat', sans-serif, serif;
     font-weight: 700;
     letter-spacing: 0.02em;
 }
@@ -81,7 +81,7 @@ ol {
 
 .logo {
     font-family: "BlackItalic";
-    font-size: 26;
+    font-size: 26px;
     float: left;
 }
 
@@ -1139,7 +1139,6 @@ a:hover {
 #navbar .download {
     margin-top: 0.3em;
     font-size: 1em;
-    font-family: 'ALiHuiPu-Medium';
 }
 #navbar .download a {
     position: absolute;
@@ -1147,14 +1146,18 @@ a:hover {
     text-align: right;
     text-decoration: none;
     color: #515151;
+    font-family: serif;
 }
 #navbar .download a:hover {
     color: #007bff;
 }
+#navbar .download span {
+    margin-top: 0.1em;
+}
 #navbar .download svg {
     align: right;
-    height: 1.5em;
-    width: 1.5em;
+    height: 1.8em;
+    width: 1.8em;
 }
 
 @media only screen and (min-width: 768px) and (max-width:991px) {
@@ -1283,4 +1286,93 @@ a:hover {
 .row {
     margin-right: 0;
     margin-left: 0;
+}
+
+#list .row span {
+    color: #515151;
+}
+
+#navbar-upload-file-name {
+    height: 2em;
+    width: auto;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    color: #1d2124;
+    background: #fff;
+    border: 0;
+    border-bottom: #515151 2px solid;
+}
+#navbar-upload-file-name:focus {
+    outline: none;
+    animation: change-border 0.5s ease-in-out;
+    border-bottom: #0a7cef 2px solid;
+}
+@keyframes change-border {
+    0% {
+        border-bottom: #515151 2px solid;
+    }
+    100% {
+        border-bottom: #0a7cef 2px solid;
+    }
+}
+
+
+#upload-form span {
+    font-size: 1.1em;
+}
+#upload-form span a {
+    color: #007bff;
+    text-decoration: none;
+    box-shadow: none;
+}
+#upload-form span a:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#upload-form span input {
+    height: 1.3em;
+    width: 7em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+    padding-bottom: 0.2em;
+    color: #1d2124;
+    background: #f6f6f6;
+    border: 0;
+    border-bottom: #515151 2px solid;
+}
+#upload-form span input:focus {
+    outline: none;
+    animation: change-border 0.5s ease-in-out;
+    border-bottom: #0a7cef 2px solid;
+}
+
+#upload-file {
+    margin-top: 0.5em;
+    height: 60%;
+    width: 100%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    background: #fff;
+    border: 0;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#upload-file button {
+    position: relative;
+    margin-top: 2em;
+    width: 80%;
+    height: 80%;
+    background: #fff;
+    border: #707070 3px dashed;
+    border-radius: 5px;
+}
+#upload-file button:focus {
+    outline: none;
+}
+
+#upload-file button svg {
+    position: relative;
+    height: 50%;
 }

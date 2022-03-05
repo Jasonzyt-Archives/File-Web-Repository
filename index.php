@@ -119,7 +119,7 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
     <!-- LINK-CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font.css">
-    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body style="overflow: visible;background:#f6f6f6;">

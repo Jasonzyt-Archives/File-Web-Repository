@@ -2,9 +2,13 @@
 
 include "config.php";
 
-function getIconPath(): string {
+function getHead(): object {
     global $head;
-    return $head->icon;
+    return $head;
+}
+
+function getIconPath(): string {
+    return getHead()->icon;
 }
 
 function getTextOnTopLeft(): string {
@@ -41,14 +45,14 @@ $path = $_REQUEST["path"] ?? null;
     <meta name="author" content="JasonZYT" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- TITLE -->
-    <title>Preview</title>
+    <title>Preview - <?php getHead()->title ?></title>
     <!-- ICON -->
     <link rel="shortcut icon" href="<?php echo getIconPath(); ?>" />
     <link rel="bookmark" href="<?php echo getIconPath(); ?>" />
     <!-- LINK-CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font.css">
-    <link rel="stylesheet" href="assets/css/style.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
