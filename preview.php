@@ -67,10 +67,10 @@ $path = $_REQUEST["path"] ?? null;
                     <?php
                     // Path on the top
                     if ($path != "") {
-                        echo '<li><a href="/">Home<svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
+                        echo '<li><a href="/"><span class="i18n">Home</span><svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
                     }
                     else {
-                        echo '<li><a style="margin-top:0.15em;color:#000;">Home</a></li>';
+                        echo '<li><a class="i18n" style="margin-top:0.15em;color:#000;">Home</a></li>';
                     }
                     $dirs = explode("/", $path);
                     $curDir = $dirs[count($dirs) - 1];
@@ -90,7 +90,7 @@ $path = $_REQUEST["path"] ?? null;
                 </ul>
                 <div class="download">
                     <a href="download.php?path=<?php echo $path; ?>">
-                        <svg><use xlink:href="#Download" /></svg><span>下载此文件</span>
+                        <svg><use xlink:href="#Download" /></svg><span class="i18n">Download</span>
                     </a>
                 </div>
             </div>
@@ -103,7 +103,7 @@ $path = $_REQUEST["path"] ?? null;
             echo <<<EOT
         <div class="not-found">
             <svg><use xlink:href="#Warning"/></svg>
-            <span>File&nbsp;<b>$path</b>&nbsp;NOT FOUND!</span>
+            <span class="i18n">File&nbsp;<b>$path</b>&nbsp;NOT FOUND!</span>
         </div>
 EOT;
             goto footer;
@@ -118,7 +118,7 @@ EOT;
         <p>
             <a href="https://github.com/Jasonzyt/File-Web-Repository">File-Web-Repository</a>&nbsp;v2.0.0
         </p>
-        <p>Copyright ©2020-2022 All Rights Reserved.</p>
+        <p>&copy;2020-2022 All Rights Reserved.</p>
         <p>Powered By JasonZYT</p>
         <p id="hitokoto"></p>
         <script src="https://v1.hitokoto.cn/?encode=js&amp;select=%23hitokoto" defer=""></script>
@@ -127,5 +127,14 @@ EOT;
     ?>
 
 </body>
+
+<script type="text/javascript" src="assets/js/i18n.js"></script>
+<script>
+    <?php
+    if (isset($_COOKIE["lang"])) echo "langCode = '" . $_COOKIE["lang"] . "';";
+    ?>
+    fullLang = <?php include "I18N.json"; ?>;
+    do_i18n();
+</script>
 
 </html>

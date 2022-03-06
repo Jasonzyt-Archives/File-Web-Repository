@@ -4,7 +4,7 @@ a {
 }
 
 body {
-    font-family: 'Consola';
+    font-family: 'Consola', 'Helvetica', 'Arial', 'sans-serif';
     overflow: hidden;
 }
 
@@ -80,7 +80,7 @@ ol {
 }
 
 .logo {
-    font-family: "BlackItalic";
+    font-family: "BlackItalic", serif;
     font-size: 26px;
     float: left;
 }
@@ -1371,8 +1371,25 @@ a:hover {
 #upload-file button:focus {
     outline: none;
 }
-
 #upload-file button svg {
     position: relative;
     height: 50%;
+}
+
+#submit-btn {
+    margin-top: 1em;
+    width: 10em;
+    height: 2em;
+    background-image: linear-gradient(to right, #707070, #3f3f3f);
+    border: 0;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+#submit-btn:hover {
+    background-image: linear-gradient(to right, #5d5d5d, #333333);
+}
+#submit-btn:focus {
+    outline: none;
 }

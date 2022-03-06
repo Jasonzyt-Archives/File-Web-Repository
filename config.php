@@ -9,4 +9,3 @@ $head = (object) [
 $enableMarkdown = true;
 $textOnTopLeft = "File Repository";
 $fileDirectory = "Filedir/";
-//$hostName = "http://localhost/"; // Dont set this

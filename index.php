@@ -134,10 +134,9 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
                     <?php
                     // Path on the top
                     if ($dir != "") {
-                        echo '<li><a href="/">Home<svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
-                    }
-                    else {
-                        echo '<li><a style="margin-top:0.15em;color:#000;">Home</a></li>';
+                        echo '<li><a href="/"><span class="i18n">Home</span><svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
+                    } else {
+                        echo '<li><a class="i18n" style="margin-top:0.15em;color:#000;">Home</a></li>';
                     }
                     $dirs = explode("/", $dir);
                     $curDir = $dirs[count($dirs) - 1];
@@ -165,7 +164,7 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
             echo<<<EOT
         <div class="not-found">
               <svg><use xlink:href="#Warning"/></svg>
-              <span>Directory&nbsp;<b>$dir</b>&nbsp;NOT FOUND!</span>
+              <span class="i18n">Directory&nbsp;<b>$dir</b>&nbsp;NOT FOUND!</span>
         </div>
 EOT;
             goto footer;
@@ -174,9 +173,9 @@ EOT;
         <div class="container">
             <div id="dir-list-header">
                 <div class="row" style="font-family:Consolas,sans-serif">
-                    <div class="file-name col-md-7 col-sm-6 col-xs-9">File</div>
-                    <div class="file-size col-md-2 col-sm-2 col-xs-3 text-right">Size</div>
-                    <div class="last-edit-time col-md-3 col-sm-4 hidden-xs text-right">Last-Edit-Time</div>
+                    <div class="i18n file-name col-md-7 col-sm-6 col-xs-9">File</div>
+                    <div class="i18n file-size col-md-2 col-sm-2 col-xs-3 text-right">Size</div>
+                    <div class="i18n last-edit-time col-md-3 col-sm-4 hidden-xs text-right">Modified</div>
                 </div>
             </div>
             <ul id="dir-list" class="nav nav-pills nav-stacked">
@@ -287,16 +286,25 @@ EOT;
         <p>
             <a href="https://github.com/Jasonzyt/File-Web-Repository">File-Web-Repository</a>&nbsp;v2.0.0
         </p>
-        <p>Copyright ©2020-2022 All Rights Reserved.</p>
+        <p>&copy;2020-2022 All Rights Reserved.</p>
         <p>Powered By JasonZYT</p>
         <p id="hitokoto"></p>
         <script src="https://v1.hitokoto.cn/?encode=js&amp;select=%23hitokoto" defer=""></script>
     </footer>
 EOT;
     ?>
-    <script type="text/javascript" src="assets/js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="assets/js/jquery.nav.js"></script>
 
 </body>
+
+<script type="text/javascript" src="assets/js/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="assets/js/jquery.nav.js"></script>
+<script type="text/javascript" src="assets/js/i18n.js"></script>
+<script>
+    <?php
+    if (isset($_COOKIE["lang"])) echo "langCode = '" . $_COOKIE["lang"] . "';";
+    ?>
+    fullLang = <?php include "I18N.json"; ?>;
+    do_i18n();
+</script>
 
 </html>

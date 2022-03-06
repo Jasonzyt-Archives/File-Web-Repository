@@ -1,39 +1,4 @@
 @font-face {
-    font-family: 'SourceCodePro-Light';
-    src: url('../fonts/SourceCodePro-Light.woff2') format('woff2'), url("../fonts/SourceCodePro-Light.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SourceCodePro-Black';
-    src: url('../fonts/SourceCodePro-Black.woff2') format('woff2'), url("../fonts/SourceCodePro-Black.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SourceCodePro-Bold';
-    src: url('../fonts/SourceCodePro-Bold.woff2') format('woff2'), url("../fonts/SourceCodePro-Bold.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SourceCodePro-Regular';
-    src: url('../fonts/SourceCodePro-Regular.woff2') format('woff2'), url("../fonts/SourceCodePro-Regular.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SourceCodePro-Medium';
-    src: url('../fonts/SourceCodePro-Medium.woff2') format('woff2'), url("../fonts/SourceCodePro-Medium.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-@font-face {
     font-family: 'Consola';
     src: url('../fonts/Consola.ttf') format('truetype');
     font-weight: 300;
@@ -45,34 +10,4 @@
     src: url('../fonts/Consola-Bold.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
-}
-
-@font-face {
-    font-family: 'ALiHuiPu-Light';
-    font-display: swap;
-    src: url('../fonts/ALiBaBaHuiPuTi-Light.eot');
-    /* IE9 */
-    src: url('../fonts/ALiBaBaHuiPuTi-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/ALiBaBaHuiPuTi-Light.woff2') format('woff2'), url('../fonts/ALiBaBaHuiPuTi-Light.woff') format('woff'), /* chrome、firefox */
-    url('../fonts/ALiBaBaHuiPuTi-Light.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-    url('../fonts/ALiBaBaHuiPuTi-Light.svg#webfont') format('svg');
-    /* iOS 4.1- */
-}
-
-@font-face {
-    font-family: "ALiHuiPu-Regular";
-    font-display: swap;
-    src: url('../fonts/ALiBaBaHuiPuTi-Regular.woff2') format('woff2'), url('../fonts/ALiBaBaHuiPuTi-Regular.woff') format('woff'), url('../fonts/ALiBaBaHuiPuTi-Regular.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: 'ALiHuiPu-Medium';
-    font-display: swap;
-    src: url('../fonts/ALiBaBaHuiPuTi-Medium.eot');
-    /* IE9 */
-    src: url('../fonts/ALiBaBaHuiPuTi-Medium.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/ALiBaBaHuiPuTi-Medium.woff2') format('woff2'), url('../fonts/ALiBaBaHuiPuTi-Medium.woff') format('woff'), /* chrome、firefox */
-    url('../fonts/ALiBaBaHuiPuTi-Medium.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-    url('../fonts/ALiBaBaHuiPuTi-Medium.svg#webfont') format('svg');
-    /* iOS 4.1- */
 }
