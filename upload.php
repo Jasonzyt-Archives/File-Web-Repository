@@ -49,7 +49,7 @@ $dir = $_REQUEST["dir"] ?? "";
                 <ul class="nav-menu">
                     <?php
                     // Path on the top
-                    echo '<li id="to-home"><a href="/"><span class="i18n">Home</span><svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
+                    echo '<li class="ignore"><a href="/"><span class="i18n">Home</span><svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
                     $dirs = explode("/", $dir);
                     $i = 0;
                     foreach ($dirs as $d) {
@@ -60,7 +60,7 @@ $dir = $_REQUEST["dir"] ?? "";
                         echo '<li><a href="/?dir=' . substr($dir, 0, $i - 1) . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
                     }
                     ?>
-                    <li>
+                    <li class="ignore">
                         <input class="variable-width-input" id="navbar-upload-file-name" type="text" placeholder="..." readonly/>
                     </li>
                 </ul>
@@ -83,7 +83,7 @@ EOT;
         <div class="container">
             <h2 class="i18n">Upload Files</h2>
             <form id="upload-form" action="upload.php" method="post" enctype="multipart/form-data">
-                <span id="upload-path"><span class="i18n">Upload to </span><a class="i18n" onclick="backTo('');">Home</a>&nbsp;/<?php
+                <span id="upload-path"><span class="i18n ignore">Upload to </span><a class="i18n ignore" onclick="backTo('');">Home</a> /<?php
                     $dirs = explode("/", $dir);
                     $i = 0;
                     foreach ($dirs as $d) {
@@ -92,10 +92,9 @@ EOT;
                         }
                         $i += strlen($d) + 1;
                         $path = substr($dir, 0, $i - 1);
-                        echo "&nbsp;<a onclick=\"backTo('$path');\">$d</a>&nbsp;/";
+                        echo " <a onclick=\"backTo('$path');\">$d</a> /";
                     }
-                    ?>
-                    <input class="variable-width-input" id="input-file-name" type="text" name="fileName" placeholder="File name" />
+                    ?> <input class="variable-width-input ignore" id="input-file-name" type="text" name="fileName" placeholder="File name" />
                 </span>
                 <br/>
                 <div id="upload-file">
@@ -196,19 +195,50 @@ EOT;
             setFileName(this.value);
         }
     }
-    function backTo(path) {
-        let fileName = document.getElementById("navbar-upload-file-name").value;
-        let navMenu = document.getElementsByClassName("nav-menu")[0];
-        navMenu.childNodes.forEach(function (el) {
-            if (el.id !== "to-home" && el.id !== "file-name-box") {
-                navMenu.removeChild(el);
+    const $_GET = (function() {
+        let url = window.document.location.href.toString();
+        let u = url.split("?");
+        if (typeof(u[1]) == "string") {
+            u = u[1].split("&");
+            let get = {};
+            for (let i in u) {
+                let j = u[i].split("=");
+                get[j[0]] = j[1];
             }
-        });
+            return get;
+        } else {
+            return {};
+        }
+    })();
+    let curDir = $_GET["dir"];
+    function backTo(path) {
+        if (curDir === path) return;
+        curDir = path;
+        let navMenu = document.getElementsByClassName("nav-menu")[0];
+        // Warning: Don't remove any child in forEach
+        for (let i = 0; i < navMenu.childNodes.length; i++){
+            const el = navMenu.childNodes[i];
+            if (!el.classList?.contains("ignore")) {
+                navMenu.removeChild(el);
+                i--;
+            }
+        }
         let uploadPath = document.getElementById("upload-path");
-        uploadPath.childNodes.forEach(function (el) {
-            uploadPath.removeChild(el);
-        });
-        uploadPath.innerHTML = "Upload to <a onclick=\"backTo('');\">Home</a>&nbsp;/&nbsp;";
+        for (let i = 0; i < uploadPath.childNodes.length; i++){
+            const el = uploadPath.childNodes[i];
+            if (el.nodeName !== "#text" && !el.classList?.contains("ignore")) {
+                uploadPath.removeChild(el);
+                i--;
+                continue;
+            }
+            if (el.textContent === ' / ') {
+                uploadPath.removeChild(el);
+                i--;
+            }
+        }
+        let navbarInput = document.getElementById("navbar-upload-file-name");
+        let formInput = document.getElementById("input-file-name");
+        uploadPath.insertBefore(document.createTextNode(" / "), formInput);
         let cur = "";
         path.split("/").forEach(function(item) {
             cur += item;
@@ -216,27 +246,16 @@ EOT;
             let a = document.createElement("a");
             a.innerText = "" + item;
             a.href = "/?dir=" + cur;
-            let svg = document.createElement("svg");
-            let use = document.createElement("use");
-            use.setAttribute("xlink:href", "#AngleBracket-R");
-            svg.appendChild(use);
-            a.appendChild(svg);
+            a.innerHTML += '<svg><use xlink:href="#AngleBracket-R" /></svg>';
             li.appendChild(a);
-            navMenu.appendChild(li);
+            navMenu.insertBefore(li, navbarInput.parentNode);
             a = document.createElement("a");
             a.innerText = "" + item;
-            a.onclick = function () {
-                backTo(cur);
-            }
-            uploadPath.appendChild(a);
-            uploadPath.appendChild(document.createTextNode(" / "));
+            a.setAttribute("onclick", `backTo('${cur}')`);
+            uploadPath.insertBefore(a, formInput);
+            uploadPath.insertBefore(document.createTextNode(" / "), formInput);
             cur += "/";
         });
-        navMenu.innerHTML += '<li id="file-name-box"><input class="variable-width-input" id="navbar-upload-file-name" type="text" value="" readonly/></li>';
-        uploadPath.innerHTML += '<input class="variable-width-input" id="input-file-name" type="text" name="fileName" placeholder="File name" />';
-        if (fileName.length !== 0) {
-            setFileName(fileName);
-        }
     }
     function checkFileName(name) {
         let illegalChars = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|"];
