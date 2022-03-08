@@ -1359,7 +1359,6 @@ a:hover {
 #upload-file button {
     position: relative;
     margin-top: 1.5em;
-    margin-left: 0.65em;
     width: 24em;
     height: 12em;
     background: #fff;
@@ -1381,7 +1380,7 @@ a:hover {
 #submit-btn {
     width: 10em;
     height: 2em;
-    background-image: linear-gradient(to right, #707070, #3f3f3f);
+    background-image: linear-gradient(to right, #626262, #3f3f3f);
     border: 0;
     border-radius: 5px;
     color: #fff;

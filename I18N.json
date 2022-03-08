@@ -6,13 +6,15 @@
     "File": "文件",
     "Size": "大小",
     "Modified": "修改时间",
-    "Upload Files": "上传文件",
+    "Upload Single File": "上传单个文件",
     "Upload to ": "上传至 ",
     "Download": "下载此文件",
     "Only one file can be uploaded at a time!\nPlease choose one file and try again.": "一次只能上传一个文件!\n请选择一个文件再重试",
     "File name contains illegal characters!": "文件名包含非法字符!",
     "Click here or drop your file to here to select a file": "点击这里或将文件拖拽到此处以选择文件",
     "File selected: ": "已选择: ",
-    "Upload": "上传"
+    "Upload": "上传",
+    "Uploading...": "上传中...",
+    "Please input file name": "请输入文件名"
   }
 }

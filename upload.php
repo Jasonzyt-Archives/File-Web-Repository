@@ -51,13 +51,14 @@ $dir = $_REQUEST["dir"] ?? "";
                     // Path on the top
                     echo '<li class="ignore"><a href="/"><span class="i18n">Home</span><svg><use xlink:href="#AngleBracket-R" /></svg></a></li>';
                     $dirs = explode("/", $dir);
-                    $i = 0;
+                    $path = "";
                     foreach ($dirs as $d) {
                         if ($d == "") {
                             continue;
                         }
-                        $i += strlen($d) + 1;
-                        echo '<li><a href="/?dir=' . substr($dir, 0, $i - 1) . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                        $path .= $d;
+                        echo '<li><a href="/?dir=' . $path . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                        $path .= "/";
                     }
                     ?>
                     <li class="ignore">
@@ -68,46 +69,37 @@ $dir = $_REQUEST["dir"] ?? "";
         </div>
     </nav>
     <section class="services-section spad">
-        <?php
-        /*$realPath = getFileDir() . $dir;
-        if ($path == "" || !file_exists($realPath) || is_dir($realPath)) {
-            echo <<<EOT
-        <div class="not-found">
-            <svg><use xlink:href="#Warning"/></svg>
-            <span>File&nbsp;<b>$path</b>&nbsp;NOT FOUND!</span>
-        </div>
-EOT;
-            goto footer;
-        }*/
-        ?>
         <div class="container">
-            <h2 class="i18n">Upload Files</h2>
+            <?php
+            var_dump($_POST);
+            ?>
+            <h2 class="i18n">Upload Single File</h2>
             <form id="upload-form" action="upload.php" method="post" enctype="multipart/form-data">
                 <span id="upload-path"><span class="i18n ignore">Upload to </span><a class="i18n ignore" onclick="backTo('');">Home</a> /<?php
                     $dirs = explode("/", $dir);
-                    $i = 0;
+                    $path = "";
                     foreach ($dirs as $d) {
                         if ($d == "") {
                             continue;
                         }
-                        $i += strlen($d) + 1;
-                        $path = substr($dir, 0, $i - 1);
+                        $path .= $d;
                         echo " <a onclick=\"backTo('$path');\">$d</a> /";
+                        $path .= "/";
                     }
                     ?> <input class="variable-width-input ignore" id="input-file-name" type="text" name="fileName" placeholder="File name" />
                 </span>
                 <br/>
                 <div id="upload-file">
-                    <button id="fake-file-btn" onclick="document.getElementById('real-file-btn').click()">
+                    <button id="fake-file-btn" type="button" onclick="document.getElementById('real-file-btn').click()">
                         <svg><use xlink:href="#Upload" /></svg>
-                        <br />
+                        <br/>
                         <span id="select-text" class="i18n">Click here or drop your file to here to select a file</span>
                     </button>
                     <input id="real-file-btn" type="file" name="file" style="display: none;" />
                 </div>
                 <br/>
                 <input type="hidden" id="upload-dir" name="dir" value="<?php echo $dir; ?>" />
-                <input class="value-i18n" id="submit-btn" type="submit" onclick="document.getElementById('upload-dir').value = curDir" value="Upload" />
+                <input class="value-i18n" id="submit-btn" type="submit" value="Upload" />
             </form>
         </div>
     </section>
@@ -135,7 +127,38 @@ EOT;
     ?>
     fullLang = <?php include "I18N.json"; ?>;
     do_i18n();
+    const $_GET = (function() {
+        let url = window.document.location.href.toString();
+        let u = url.split("?");
+        if (typeof(u[1]) == "string") {
+            u = u[1].split("&");
+            let get = {};
+            for (let i in u) {
+                let j = u[i].split("=");
+                get[j[0]] = j[1];
+            }
+            return get;
+        } else {
+            return {};
+        }
+    })();
+    let curDir = $_GET["dir"] ? $_GET["dir"] : "";
     disableEnterSubmit();
+    // Upload form
+    let form = document.getElementById("upload-form")
+    form.onsubmit = function () {
+        if (document.getElementById("input-file-name").value === "") {
+            alert(tr("Please input file name"));
+            return false;
+        }
+        if (document.getElementById("real-file-btn").files.length !== 1) {
+            alert(tr("Only one file can be uploaded at a time!\nPlease choose one file and try again."));
+            return false;
+        }
+        document.getElementById('upload-dir').value = curDir;
+        document.getElementById("submit-btn").value = tr("Uploading...");
+    };
+    // Fake file button (drag/drop)
     let fakeFileButton = document.getElementById("fake-file-btn");
     fakeFileButton.ondragover = function(ev) {
         ev.preventDefault();
@@ -149,45 +172,25 @@ EOT;
         ev.preventDefault();
         let files = ev.dataTransfer.files;
         if (files.length > 1) {
-            alert(i18n_get("Only one file can be uploaded at a time!\nPlease choose one file and try again."));
+            alert(tr("Only one file can be uploaded at a time!\nPlease choose one file and try again."));
             return;
         } else if (files.length === 0) {
             return;
         } else if (!checkFileName(files[0].name)) {
-            alert(i18n_get("File name contains illegal characters!"));
+            alert(tr("File name contains illegal characters!"));
             return;
         }
         let file = files[0];
-        //setFileName(file.name);
+        setFileName(file.name);
         document.getElementById("real-file-btn").files = files;
+        document.getElementById("select-text").innerText = tr("File selected: ") + file.name;
     }
+    // Real file button
     let realFileButton = document.getElementById("real-file-btn");
     realFileButton.onchange = function() {
         let file = realFileButton.files[0];
         setFileName(file.name);
-        document.getElementById("select-text").innerText = i18n_get("File selected: ") + file.name;
-    }
-    
-    function setFileName(name) {
-        // 1em padding
-        document.getElementById("navbar-upload-file-name").style.width = (getStringWidth(name, document.getElementById("navbar-upload-file-name")) + em2pixel(document.getElementById("navbar-upload-file-name"), 1)) + "px";
-        document.getElementById("navbar-upload-file-name").value = name;
-        document.getElementById("input-file-name").style.width = (getStringWidth(name, document.getElementById("input-file-name")) + em2pixel(document.getElementById("input-file-name"), 1)) + "px";
-        document.getElementById("input-file-name").value = name;
-    }
-
-    function em2pixel(element, em = 1) {
-        let fontSize = window.getComputedStyle(element, null).getPropertyValue('font-size');
-        return parseFloat(fontSize) * em;
-    }
-    function getStringWidth(str, element) {
-        let span = document.createElement("span");
-        span.style.fontSize = em2pixel(element) + "px";
-        span.innerHTML = str;
-        document.body.appendChild(span);
-        let width = span.offsetWidth;
-        document.body.removeChild(span);
-        return width;
+        document.getElementById("select-text").innerText = tr("File selected: ") + file.name;
     }
     let variableWidthInputs = document.getElementsByClassName("variable-width-input");
     for (let i = 0; i < variableWidthInputs.length; i++) {
@@ -213,26 +216,35 @@ EOT;
         } else if (ev.key === "/" || ev.key === "\\") {
             ev.preventDefault();
             let dirName = this.value;
-            setFileName("");
-            backTo(curDir + '/' + dirName);
+            if (dirName !== "") {
+                setFileName("");
+                backTo(curDir + '/' + dirName);
+            }
         }
     }
-    const $_GET = (function() {
-        let url = window.document.location.href.toString();
-        let u = url.split("?");
-        if (typeof(u[1]) == "string") {
-            u = u[1].split("&");
-            let get = {};
-            for (let i in u) {
-                let j = u[i].split("=");
-                get[j[0]] = j[1];
-            }
-            return get;
-        } else {
-            return {};
-        }
-    })();
-    let curDir = $_GET["dir"] ? $_GET["dir"] : "";
+    // Set the file name in inputs
+    function setFileName(name) {
+        // 1em padding
+        document.getElementById("navbar-upload-file-name").style.width = (getStringWidth(name, document.getElementById("navbar-upload-file-name")) + em2pixel(document.getElementById("navbar-upload-file-name"), 1)) + "px";
+        document.getElementById("navbar-upload-file-name").value = name;
+        document.getElementById("input-file-name").style.width = (getStringWidth(name, document.getElementById("input-file-name")) + em2pixel(document.getElementById("input-file-name"), 1)) + "px";
+        document.getElementById("input-file-name").value = name;
+    }
+    // Convert em to pixel
+    function em2pixel(element, em = 1) {
+        let fontSize = window.getComputedStyle(element, null).getPropertyValue('font-size');
+        return parseFloat(fontSize) * em;
+    }
+    function getStringWidth(str, element) {
+        let span = document.createElement("span");
+        span.style.fontSize = em2pixel(element) + "px";
+        span.innerHTML = str;
+        document.body.appendChild(span);
+        let width = span.offsetWidth;
+        document.body.removeChild(span);
+        return width;
+    }
+    // Set the current upload path to {path}
     function backTo(path) {
         if (curDir === path) return;
         curDir = path;
@@ -280,6 +292,7 @@ EOT;
             cur += "/";
         });
     }
+    // Check if the file name is valid
     function checkFileName(name) {
         let illegalChars = ["\\", "/", ":", "*", "?", "\"", "<", ">", "|"];
         if (name.length === 0) {
@@ -292,12 +305,12 @@ EOT;
         }
         return true;
     }
+    // Disable submitting the form with Enter key
     function disableEnterSubmit() {
         let form = document.getElementById("upload-form");
         form.onkeydown = function(ev) {
             if (ev.key === "Enter") {
                 ev.preventDefault();
-                return false;
             }
         }
     }

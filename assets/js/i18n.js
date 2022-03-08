@@ -74,7 +74,7 @@ function do_i18n() {
         }
     }
 }
-function i18n_get(key) {
+function tr(key) {
     if (lang !== null) {
         if (Object.keys(lang).indexOf(key) !== -1) {
             return lang[key];

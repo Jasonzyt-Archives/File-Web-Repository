@@ -141,17 +141,17 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
                     $dirs = explode("/", $dir);
                     $curDir = $dirs[count($dirs) - 1];
                     array_pop($dirs);
-                    $str = "";
+                    $path = "";
                     $parentDir = $dir == "" ? null : "/";
                     if ($curDir != "") {
                         foreach ($dirs as $d) {
                             if ($d == "") {
                                 continue;
                             }
-                            $str .= $d;
-                            echo '<li><a href="/?dir=' . $str . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
-                            $parentDir = $str;
-                            $str .= '/';
+                            $path .= $d;
+                            echo '<li><a href="/?dir=' . $path . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                            $parentDir = $path;
+                            $path .= '/';
                         }
                         echo '<li><a style="margin-top:0.15em;color:#000;">' . $curDir . '</a></li>';
                     }

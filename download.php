@@ -8,8 +8,9 @@ function getFileDir(): string {
 }
 
 $path = getFileDir() . $_REQUEST['path'];
+$contentType = mime_content_type($path);
 if (file_exists($path)) {
-    header('Content-Type: application/octet-stream');
+    header('Content-Type: ' . $contentType);
     header('Content-Disposition: attachment; filename=' . basename($path));
     header('Content-Length: ' . filesize($path));
     readfile($path);
@@ -72,14 +73,15 @@ function getTextOnTopLeft(): string {
                     $dirs = explode("/", $path);
                     $curDir = $dirs[count($dirs) - 1];
                     array_pop($dirs);
-                    $i = 0;
+                    $path1 = "";
                     if ($curDir != "") {
                         foreach ($dirs as $d) {
                             if ($d == "") {
                                 continue;
                             }
-                            $i += strlen($d) + 1;
-                            echo '<li><a href="/?dir=' . substr($path, 0, $i - 1) . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                            $path1 .= $d;
+                            echo '<li><a href="/?dir=' . $path1 . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                            $path1 .= "/";
                         }
                         echo '<li><a style="margin-top:0.15em;color:#000;">' . $curDir . '</a></li>';
                     }
