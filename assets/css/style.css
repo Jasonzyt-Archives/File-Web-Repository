@@ -5,7 +5,6 @@ a {
 
 body {
     font-family: 'Consola', 'Helvetica', 'Arial', 'sans-serif';
-    overflow: hidden;
 }
 
 html,
@@ -1349,10 +1348,8 @@ a:hover {
 
 #upload-file {
     margin-top: 0.5em;
-    height: 60%;
-    width: 100%;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    width: 30em;
+    height: 15em;
     background: #fff;
     border: 0;
     border-radius: 5px;
@@ -1361,12 +1358,17 @@ a:hover {
 
 #upload-file button {
     position: relative;
-    margin-top: 2em;
-    width: 80%;
-    height: 80%;
+    margin-top: 1.5em;
+    margin-left: 0.65em;
+    width: 24em;
+    height: 12em;
     background: #fff;
     border: #707070 3px dashed;
     border-radius: 5px;
+}
+#upload-file button:hover {
+    cursor: pointer;
+    border: #0a7cef 3px dashed;
 }
 #upload-file button:focus {
     outline: none;
@@ -1377,7 +1379,6 @@ a:hover {
 }
 
 #submit-btn {
-    margin-top: 1em;
     width: 10em;
     height: 2em;
     background-image: linear-gradient(to right, #707070, #3f3f3f);

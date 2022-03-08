@@ -11,7 +11,8 @@
     "Download": "下载此文件",
     "Only one file can be uploaded at a time!\nPlease choose one file and try again.": "一次只能上传一个文件!\n请选择一个文件再重试",
     "File name contains illegal characters!": "文件名包含非法字符!",
-    "Click here or drop your file to here to upload": "点击这里或将文件拖拽到此处上传",
+    "Click here or drop your file to here to select a file": "点击这里或将文件拖拽到此处以选择文件",
+    "File selected: ": "已选择: ",
     "Upload": "上传"
   }
 }

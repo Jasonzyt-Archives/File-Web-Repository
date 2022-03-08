@@ -98,15 +98,16 @@ EOT;
                 </span>
                 <br/>
                 <div id="upload-file">
-                    <button id="fake-upload-btn" onclick="document.getElementById('real-upload-btn').click()">
+                    <button id="fake-file-btn" onclick="document.getElementById('real-file-btn').click()">
                         <svg><use xlink:href="#Upload" /></svg>
                         <br />
-                        <span class="i18n">Click here or drop your file to here to upload</span>
+                        <span id="select-text" class="i18n">Click here or drop your file to here to select a file</span>
                     </button>
-                    <input id="real-upload-btn" type="file" name="file" style="display: none;" />
+                    <input id="real-file-btn" type="file" name="file" style="display: none;" />
                 </div>
                 <br/>
-                <input class="value-i18n" id="submit-btn" type="submit" value="Upload" />
+                <input type="hidden" id="upload-dir" name="dir" value="<?php echo $dir; ?>" />
+                <input class="value-i18n" id="submit-btn" type="submit" onclick="document.getElementById('upload-dir').value = curDir" value="Upload" />
             </form>
         </div>
     </section>
@@ -135,17 +136,16 @@ EOT;
     fullLang = <?php include "I18N.json"; ?>;
     do_i18n();
     disableEnterSubmit();
-    let btn = document.getElementById("fake-upload-btn");
-    btn.ondragover = function(ev) {
+    let fakeFileButton = document.getElementById("fake-file-btn");
+    fakeFileButton.ondragover = function(ev) {
         ev.preventDefault();
-        btn.style.border = "3px dashed #0a7cef";
+        fakeFileButton.style.border = "3px dashed #0a7cef";
     }
-    btn.ondragleave = function() {
-        btn.style.border = "3px dashed #707070";
+    fakeFileButton.ondragleave = function() {
+        fakeFileButton.style.border = "3px dashed #707070";
     }
-    btn.ondrop = function(ev) {
-        console.log("ondrop");
-        btn.style.border = "3px dashed #707070";
+    fakeFileButton.ondrop = function(ev) {
+        fakeFileButton.style.border = "3px dashed #707070";
         ev.preventDefault();
         let files = ev.dataTransfer.files;
         if (files.length > 1) {
@@ -158,8 +158,14 @@ EOT;
             return;
         }
         let file = files[0];
+        //setFileName(file.name);
+        document.getElementById("real-file-btn").files = files;
+    }
+    let realFileButton = document.getElementById("real-file-btn");
+    realFileButton.onchange = function() {
+        let file = realFileButton.files[0];
         setFileName(file.name);
-        document.getElementById("real-upload-btn").files = files;
+        document.getElementById("select-text").innerText = i18n_get("File selected: ") + file.name;
     }
     
     function setFileName(name) {
@@ -195,6 +201,22 @@ EOT;
             setFileName(this.value);
         }
     }
+    let inputFileName = document.getElementById("input-file-name");
+    inputFileName.onkeydown = function(ev) {
+        if (ev.key === "Backspace") {
+            if (this.value === "") {
+                ev.preventDefault();
+                setFileName(curDir.substr(curDir.lastIndexOf("/") + 1));
+                backTo(curDir.substr(0, curDir.lastIndexOf("/")));
+            }
+            setFileName(this.value);
+        } else if (ev.key === "/" || ev.key === "\\") {
+            ev.preventDefault();
+            let dirName = this.value;
+            setFileName("");
+            backTo(curDir + '/' + dirName);
+        }
+    }
     const $_GET = (function() {
         let url = window.document.location.href.toString();
         let u = url.split("?");
@@ -210,7 +232,7 @@ EOT;
             return {};
         }
     })();
-    let curDir = $_GET["dir"];
+    let curDir = $_GET["dir"] ? $_GET["dir"] : "";
     function backTo(path) {
         if (curDir === path) return;
         curDir = path;
@@ -241,6 +263,7 @@ EOT;
         uploadPath.insertBefore(document.createTextNode(" / "), formInput);
         let cur = "";
         path.split("/").forEach(function(item) {
+            if (item === "") return;
             cur += item;
             let li = document.createElement("li");
             let a = document.createElement("a");
@@ -272,7 +295,7 @@ EOT;
     function disableEnterSubmit() {
         let form = document.getElementById("upload-form");
         form.onkeydown = function(ev) {
-            if (ev.keyCode === 13) {
+            if (ev.key === "Enter") {
                 ev.preventDefault();
                 return false;
             }

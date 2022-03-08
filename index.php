@@ -141,14 +141,17 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
                     $dirs = explode("/", $dir);
                     $curDir = $dirs[count($dirs) - 1];
                     array_pop($dirs);
-                    $i = 0;
+                    $str = "";
+                    $parentDir = $dir == "" ? null : "/";
                     if ($curDir != "") {
                         foreach ($dirs as $d) {
                             if ($d == "") {
                                 continue;
                             }
-                            $i += strlen($d) + 1;
-                            echo '<li><a href="/?dir=' . substr($dir, 0, $i - 1) . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                            $str .= $d;
+                            echo '<li><a href="/?dir=' . $str . '">' . $d . '<svg><use xlink:href="#AngleBracket-R"></use></svg></a></li>';
+                            $parentDir = $str;
+                            $str .= '/';
                         }
                         echo '<li><a style="margin-top:0.15em;color:#000;">' . $curDir . '</a></li>';
                     }
@@ -194,6 +197,21 @@ EOT;
                         } else {
                             $files[] = $file;
                         }
+                    }
+                    global $parentDir;
+                    if ($parentDir != null) {
+                        echo <<<EOT
+                <li data-name=".." data-href="?dir=$parentDir">
+                    <a href="?dir=$parentDir" class="clearfix" data-name="..">
+                        <div class="row">
+                            <span class="file-name col-md-7 col-sm-6 col-xs-9">
+                                <svg><use xlink:href="#Prev-Folder"/></svg>
+                                ..
+                            </span>
+                        </div>
+                    </a>
+                </li>
+EOT;
                     }
                     foreach ($dirs as $d) {
                         $realPath = $path . '/' . $d;
