@@ -1406,8 +1406,16 @@ a:hover {
     background-size: cover;
     background-position: center center;
 }
+#bg-copyright {
+    position: absolute;
+    font-size: 0.5em;
+    color: #fff;
+    bottom: 0;
+    right: 1em;
+}
 
-#login-form {
+#login-form,
+#register-form {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1417,25 +1425,31 @@ a:hover {
     background: rgba(255, 255, 255, 85%);
     border: 0;
     border-radius: 5px;
-    padding: 1em;
+    padding: 1.5em 1em 1em;
     box-shadow: 0 0 15px #707070;
 }
-#login-form input {
+#login-form input,
+#register-form input {
     margin-top: 0.5em;
 }
 #login-form input[type="text"],
-#login-form input[type="password"] {
+#login-form input[type="password"],
+#register-form input[type="text"],
+#register-form input[type="password"] {
     margin-left: 2.5em;
     width: calc(100% - 3em);
 }
-#login-form input[type="submit"] {
+#login-form input[type="submit"],
+#register-form input[type="submit"] {
     margin-top: 1em;
 }
-#login-form input[name="verification"] {
+#login-form input[name="verification"],
+#register-form input[name="verification"] {
     width: calc(100% - 10em);
 }
 
-#login-form svg {
+#login-form svg,
+#register-form svg {
     margin-top: 0.7em;
     width: 2em;
     height: 2em;
@@ -1450,4 +1464,5 @@ a:hover {
     margin-right: 0.5em;
     border-radius: 5px;
     height: calc(1.5em + .75rem + 2px);
+    cursor: pointer;
 }

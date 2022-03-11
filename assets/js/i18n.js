@@ -2,6 +2,43 @@ let lang = null;
 let langCode = navigator.language;
 let fullLang = null;
 
+function _autoTranslate(className, prop) {
+    let i18nElements = document.getElementsByClassName(className);
+    if (i18nElements !== null) {
+        for (let i = 0; i < i18nElements.length; i++) {
+            let el = i18nElements[i];
+            if (!el[prop]) {
+                continue;
+            }
+            let text = el[prop];
+            if (Object.keys(lang).indexOf(text) !== -1) {
+                el[prop] = lang[text];
+            } else {
+                for (let i1 = 0; i1 < Object.keys(lang).length; i1++){
+                    let key = Object.keys(lang)[i1];
+                    if (!key.startsWith("regex:")) continue;
+                    key = key.substring(6);
+                    let reg = new RegExp(key);
+                    if (reg.test(text) && text.match(reg) !== null) {
+                        console.log(text);
+                        let res = reg.exec(text);
+                        if (res != null) {
+                            let val = lang["regex:" + key];
+                            for (let i = 0; i < res.length; i++) {
+                                val = val.replace("$" + i, res[i]);
+                            }
+                            console.log(val);
+                            el[prop] = val;
+                            break;
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
 function i18n_init() {
     Object.keys(fullLang).forEach(function (key) {
         if (langCode.indexOf(key) !== -1) {
@@ -12,95 +49,10 @@ function i18n_init() {
 function do_i18n() {
     i18n_init();
     if (lang !== null) {
-        let i18nElements = document.getElementsByClassName("i18n");
-        if (i18nElements !== null) {
-            for (let i = 0; i < i18nElements.length; i++) {
-                let el = i18nElements[i];
-                let text = el.innerHTML;
-                if (Object.keys(lang).indexOf(text) !== -1) {
-                    el.innerHTML = lang[text];
-                } else {
-                    for (let i1 = 0; i1 < Object.keys(lang).length; i1++){
-                        let key = Object.keys(lang)[i1];
-                        if (!key.startsWith("regex:")) continue;
-                        key = key.substring(6);
-                        let reg = new RegExp(key);
-                        if (reg.test(text) && text.match(reg) !== null) {
-                            console.log(text);
-                            let res = reg.exec(text);
-                            if (res != null) {
-                                let val = lang["regex:" + key];
-                                for (let i = 0; i < res.length; i++) {
-                                    val = val.replace("$" + i, res[i]);
-                                }
-                                console.log(val);
-                                el.innerHTML = val;
-                                break;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        i18nElements = document.getElementsByClassName("value-i18n");
-        if (i18nElements !== null) {
-            for (let i = 0; i < i18nElements.length; i++) {
-                let el = i18nElements[i];
-                let text = el.value;
-                if (Object.keys(lang).indexOf(text) !== -1) {
-                    el.value = lang[text];
-                } else {
-                    for (let i1 = 0; i1 < Object.keys(lang).length; i1++){
-                        let key = Object.keys(lang)[i1];
-                        if (!key.startsWith("regex:")) continue;
-                        key = key.substring(6);
-                        let reg = new RegExp(key);
-                        if (reg.test(text) && text.match(reg) !== null) {
-                            let res = reg.exec(text);
-                            if (res != null) {
-                                let val = lang[key];
-                                for (let i = 0; i < res.length; i++) {
-                                    val = val.replace("$" + i, res[i]);
-                                }
-                                el.value = val;
-                                break;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-        i18nElements = document.getElementsByClassName("placeholder-i18n");
-        if (i18nElements !== null) {
-            for (let i = 0; i < i18nElements.length; i++) {
-                let el = i18nElements[i];
-                let text = el.placeholder;
-                if (Object.keys(lang).indexOf(text) !== -1) {
-                    el.placeholder = lang[text];
-                } else {
-                    for (let i1 = 0; i1 < Object.keys(lang).length; i1++){
-                        let key = Object.keys(lang)[i1];
-                        if (!key.startsWith("regex:")) continue;
-                        key = key.substring(6);
-                        let reg = new RegExp(key);
-                        if (reg.test(text) && text.match(reg) !== null) {
-                            let res = reg.exec(text);
-                            if (res != null) {
-                                let val = lang[key];
-                                for (let i = 0; i < res.length; i++) {
-                                    val = val.replace("$" + i, res[i]);
-                                }
-                                el.placeholder = val;
-                                break;
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
+        _autoTranslate("i18n", "innerHTML");
+        _autoTranslate("value-i18n", "value");
+        _autoTranslate("placeholder-i18n", "placeholder");
+        _autoTranslate("title-i18n", "title");
     }
 }
 function tr(key) {
