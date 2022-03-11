@@ -63,7 +63,7 @@ $dir = $_REQUEST["dir"] ?? "";
     <div class="container">
         <h2 class="i18n">Upload Single File</h2>
         <form id="upload-form" action="upload.php" method="post" enctype="multipart/form-data">
-                <span id="upload-path"><span class="i18n ignore">Upload to </span><a class="i18n ignore"
+                <span id="upload-path"><span class="i18n ignore">Upload to </span><a class="link i18n ignore"
                                                                                      onclick="backTo('');">Home</a> /<?php
                     $dirs = explode("/", $dir);
                     $path = "";
@@ -72,7 +72,7 @@ $dir = $_REQUEST["dir"] ?? "";
                             continue;
                         }
                         $path .= $d;
-                        echo " <a onclick=\"backTo('$path');\">$d</a> /";
+                        echo " <a class=\"link\" onclick=\"backTo('$path');\">$d</a> /";
                         $path .= "/";
                     }
                     ?> <input class="variable-width-input ignore" id="input-file-name" type="text" name="fileName"

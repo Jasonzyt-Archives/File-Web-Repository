@@ -1294,6 +1294,16 @@ a:hover {
     color: #515151;
 }
 
+.link {
+    color: #007bff !important;
+    text-decoration: none;
+    box-shadow: none !important;
+}
+.link:hover {
+    text-decoration: underline !important;
+    cursor: pointer;
+}
+
 #navbar-upload-file-name {
     height: 2em;
     width: auto;
@@ -1318,18 +1328,8 @@ a:hover {
     }
 }
 
-
 #upload-form span {
     font-size: 1.1em;
-}
-#upload-form span a {
-    color: #007bff;
-    text-decoration: none;
-    box-shadow: none;
-}
-#upload-form span a:hover {
-    text-decoration: underline;
-    cursor: pointer;
 }
 
 #upload-form span input {
@@ -1395,4 +1395,59 @@ a:hover {
 }
 #submit-btn:focus {
     outline: none;
+}
+
+#random-bg {
+    zoom: 1;
+    z-index: -10;
+    width: 100%;
+    height: 100%;
+    background-color: #f6f6f6;
+    background-size: cover;
+    background-position: center center;
+}
+
+#login-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30em;
+    height: 20em;
+    background: rgba(255, 255, 255, 85%);
+    border: 0;
+    border-radius: 5px;
+    padding: 1em;
+    box-shadow: 0 0 15px #707070;
+}
+#login-form input {
+    margin-top: 0.5em;
+}
+#login-form input[type="text"],
+#login-form input[type="password"] {
+    margin-left: 2.5em;
+    width: calc(100% - 3em);
+}
+#login-form input[type="submit"] {
+    margin-top: 1em;
+}
+#login-form input[name="verification"] {
+    width: calc(100% - 10em);
+}
+
+#login-form svg {
+    margin-top: 0.7em;
+    width: 2em;
+    height: 2em;
+    display: inline-block;
+    float: left;
+}
+
+.captcha {
+    float: right;
+    display: inline-block;
+    margin-top: calc(-1.5em - .75rem - 2px); /* 曲线救国, 等更好方法 */
+    margin-right: 0.5em;
+    border-radius: 5px;
+    height: calc(1.5em + .75rem + 2px);
 }

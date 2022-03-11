@@ -32,7 +32,7 @@ if ($dir != "" && $dir[mb_strlen($dir) - 1] == '/') {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
-<body style="overflow: visible;background:#f6f6f6;">
+<body>
 <?php include "assets/svg/icon.svg" ?>
 <nav id="navbar" style="display:block;">
     <div class="row">

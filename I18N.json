@@ -15,6 +15,12 @@
     "File selected: ": "已选择: ",
     "Upload": "上传",
     "Uploading...": "上传中...",
-    "Please input file name": "请输入文件名"
+    "Please input file name": "请输入文件名",
+    "Login": "登录",
+    "Username": "用户名",
+    "Password": "密码",
+    "Sign in": "登录",
+    "Verification Code": "验证码",
+    "Register": "注册"
   }
 }
