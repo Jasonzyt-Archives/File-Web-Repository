@@ -20,6 +20,9 @@ $aspectRatio = $width / $height;
 $files = glob("assets/img/backgrounds/*");
 shuffle($files);
 foreach ($files as $file) {
+    if (is_dir($file) || str_ends_with($file, ".json")) {
+        continue;
+    }
     $imageInfo = getimagesize($file);
     $imageMime = $imageInfo["mime"];
     $imageWidth = $imageInfo[0];

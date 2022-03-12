@@ -1157,132 +1157,8 @@ a:hover {
     margin-top: 0.1em;
 }
 #navbar .download svg {
-    align: right;
     height: 1.8em;
     width: 1.8em;
-}
-
-@media only screen and (min-width: 768px) and (max-width:991px) {
-    .intro-content h1 {
-        font-size: 70px;
-    }
-    .about-image {
-        margin-bottom: 30px;
-    }
-    .service-item {
-        margin-bottom: 20px;
-    }
-    .con-info {
-        margin-bottom: 30px;
-    }
-}
-
-@media only screen and (max-width: 767px) {
-    .logo {
-        font-size: 16px;
-        margin-left: 4%;
-    }
-    .intro-content h1 {
-        font-size: 50px;
-    }
-    .about-image {
-        margin-bottom: 30px;
-    }
-    .service-item {
-        margin-bottom: 20px;
-    }
-    nav {
-        padding-bottom: 8px;
-    }
-    nav ul li {
-        margin-top: -5px;
-    }
-    nav ul li svg {
-        width: 16px;
-        height: 16px;
-        margin-top: 4px;
-    }
-    nav ul li a {
-        font-size: 12px;
-        margin-top: 0;
-    }
-    #list.spad {
-        padding: 60px 0;
-    }
-    /*.nav-menu {
-        width: 100%;
-        position: absolute;
-        left: 0;
-        top: 100%;
-        box-shadow: 0px 9px 11px rgba(206, 206, 206, 0.3);
-        opacity: 0;
-        -webkit-transform: rotateX(90deg);
-        transform: rotateX(90deg);
-        -webkit-transition: all 0.5s;
-        transition: all 0.5s;
-        -webkit-transform-origin: top center;
-        transform-origin: top center;
-    }
-    .nav-menu.active {
-        opacity: 1;
-        -webkit-transform: rotateX(0deg);
-        transform: rotateX(0deg);
-    }
-    .nav-menu li {
-        display: block;
-        float: none;
-        border-top: 1px solid #efefef;
-        background: #fff;
-        padding-left: 20px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        text-align: center;
-        margin: 0;
-    }
-    .nav-menu li {
-        overflow: hidden;
-    }
-    .mobile-bar {
-        display: block !important;
-    }*/
-    .nav-menu li a {
-        font-size: 14px;
-    }
-    .by-admin {
-        text-align: center;
-        padding: 0;
-    }
-    .by-admin h5 {
-        font-size: 12px;
-    }
-    .single-social {
-        text-align: center;
-        padding-top: 5px;
-    }
-    .reply-comment-list {
-        margin-left: 0px;
-    }
-    .con-info {
-        margin-bottom: 30px;
-    }
-    #navbar .download {
-        margin-top: 0;
-    }
-    #navbar .download span {
-        display: none;
-    }
-}
-
-@media only screen and (max-width: 479px) {
-    .intro-content h1 {
-        font-size: 30px;
-    }
-    .about-image {
-        margin-bottom: 30px;
-    }
-    .service-item {
-        margin-bottom: 20px;
-    }
 }
 
 .row {
@@ -1457,6 +1333,10 @@ a:hover {
     float: left;
 }
 
+#register-form {
+    height: 24em;
+}
+
 .captcha {
     float: right;
     display: inline-block;
@@ -1465,4 +1345,99 @@ a:hover {
     border-radius: 5px;
     height: calc(1.5em + .75rem + 2px);
     cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) and (max-width:991px) {
+    .intro-content h1 {
+        font-size: 70px;
+    }
+    .about-image {
+        margin-bottom: 30px;
+    }
+    .service-item {
+        margin-bottom: 20px;
+    }
+    .con-info {
+        margin-bottom: 30px;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .logo {
+        font-size: 16px;
+        margin-left: 4%;
+    }
+    .intro-content h1 {
+        font-size: 50px;
+    }
+    .about-image {
+        margin-bottom: 30px;
+    }
+    .service-item {
+        margin-bottom: 20px;
+    }
+    nav {
+        padding-bottom: 8px;
+    }
+    nav ul li {
+        margin-top: -5px;
+    }
+    nav ul li svg {
+        width: 16px;
+        height: 16px;
+        margin-top: 4px;
+    }
+    nav ul li a {
+        font-size: 12px;
+        margin-top: 0;
+    }
+    #list.spad {
+        padding: 60px 0;
+    }
+    .nav-menu li a {
+        font-size: 14px;
+    }
+    .by-admin {
+        text-align: center;
+        padding: 0;
+    }
+    .by-admin h5 {
+        font-size: 12px;
+    }
+    .single-social {
+        text-align: center;
+        padding-top: 5px;
+    }
+    .reply-comment-list {
+        margin-left: 0px;
+    }
+    .con-info {
+        margin-bottom: 30px;
+    }
+    #navbar .download {
+        margin-top: 0;
+    }
+    #navbar .download span {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 479px) {
+    .intro-content h1 {
+        font-size: 30px;
+    }
+    .about-image {
+        margin-bottom: 30px;
+    }
+    .service-item {
+        margin-bottom: 20px;
+    }
+    #login-form,
+    #register-form {
+        width: 95%;
+        height: 50%;
+    }
+    #register-form {
+        height: 60%;
+    }
 }

@@ -61,10 +61,95 @@
       "name": "sakura_aki",
       "link": "https://www.pixiv.net/users/71505073"
     },
-    "id": "94979903"
+    "id": "94979903",
+    "picture": 2
   },
   "kanna.jpg": {
-    "preset": "custom",
+    "preset": "custom-html",
     "html": "&copy;<a class=\"link\" href=\"https://www.bilibili.com/bangumi/play/ss5800\">Bilibili</a>"
+  },
+  "74922836_p0.jpg": {
+    "preset": "pixiv",
+    "author": {
+      "name": "Aoboshi",
+      "link": "https://www.pixiv.net/artworks/74922836"
+    },
+    "id": "74922836"
+  },
+  "84085174_p0.png": {
+    "preset": "pixiv",
+    "author": {
+      "name": "koomoi",
+      "link": "https://www.pixiv.net/users/851032"
+    },
+    "id": "84085174"
+  },
+  "bilibili_post_625928209937638751.png": {
+    "preset": "bilibili:post",
+    "author": {
+      "name": "miHoYo",
+      "link": "https://ys.mihoyo.com/"
+    },
+    "url": "https://t.bilibili.com/625928209937638751"
+  },
+  "bilibili_bv1MS4y117zA.jpg": {
+    "preset": "bilibili:video&post",
+    "author": {
+      "name": "Taro(脆皮香芋子)",
+      "link": "https://space.bilibili.com/7479036"
+    },
+    "bvid": "BV1MS4y117zA",
+    "post": "https://t.bilibili.com/621885382988744896"
+  },
+  "bilibili_post_594795203195896608": {
+    "preset": "bilibili:post",
+    "author": {
+      "name": "Taro(脆皮香芋子)",
+      "link": "https://space.bilibili.com/7479036"
+    },
+    "url": "https://t.bilibili.com/594795203195896608"
+  },
+  "89865602_p0.jpg": {
+    "preset": "pixiv",
+    "author": {
+      "name": "harusame(はるさめ)",
+      "link": "https://www.pixiv.net/users/41970771"
+    },
+    "id": "89865602"
+  },
+  "67542465_p1.jpg": {
+    "preset": "pixiv",
+    "author": {
+      "name": "kieed",
+      "link": "https://www.pixiv.net/users/11525066"
+    },
+    "id": "67542465",
+    "picture": 2
+  },
+  "94424643_p13.png": {
+    "preset": "pixiv",
+    "author": {
+      "name": "Sumishima(すみしま)",
+      "link": "https://www.pixiv.net/users/73226678"
+    },
+    "id": "94424643",
+    "picture": 14
+  },
+  "94424643_p17.png": {
+    "preset": "pixiv",
+    "author": {
+      "name": "Sumishima(すみしま)",
+      "link": "https://www.pixiv.net/users/73226678"
+    },
+    "id": "94424643",
+    "picture": 18
+  },
+  "scenery_20200802.jpg": {
+    "preset": "custom-html",
+    "html": "&copy;Jasonzyt / Shot in Wuhan"
+  },
+  "scenery_20200816.jpg": {
+    "preset": "custom-html",
+    "html": "&copy;Jasonzyt / Shot in Wuhan"
   }
 }

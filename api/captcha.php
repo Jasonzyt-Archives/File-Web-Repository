@@ -12,7 +12,7 @@ const maxDots = 500;
 
 session_start();
 
-$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+$chars = str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 $chars_length = strlen($chars);
 $code = '';
 for ($i = 0; $i < codeLength; $i++) {

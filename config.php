@@ -9,3 +9,10 @@ $head = (object) [
 $enableMarkdown = true;
 $textOnTopLeft = "File Repository";
 $fileDirectory = "Filedir/";
+// Account Database
+$dbConfig = (object) [
+    "host" => "localhost",
+    "user" => "root",
+    "password" => "",
+    "database" => "FileRepository"
+];
