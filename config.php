@@ -9,10 +9,11 @@ $head = (object) [
 $enableMarkdown = true;
 $textOnTopLeft = "File Repository";
 $fileDirectory = "Filedir/";
+$encryptPasswordFrontend = true; // It is recommended to set to true, especially if https is not used.
 // Account Database
 $dbConfig = (object) [
     "host" => "localhost",
     "user" => "root",
-    "password" => "",
-    "database" => "FileRepository"
+    "password" => "password",
+    "database" => "file_repository"
 ];

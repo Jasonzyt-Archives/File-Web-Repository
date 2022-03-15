@@ -1347,6 +1347,12 @@ a:hover {
     cursor: pointer;
 }
 
+.fade-out {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 2s, opacity 2s ease-out;
+}
+
 @media only screen and (min-width: 768px) and (max-width:991px) {
     .intro-content h1 {
         font-size: 70px;

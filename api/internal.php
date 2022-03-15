@@ -24,11 +24,15 @@ function getConfig(): object
     global $enableMarkdown;
     global $textOnTopLeft;
     global $fileDirectory;
+    global $encryptPasswordFrontend;
+    global $dbConfig;
     return (object)[
         "head" => $head,
         "enableMarkdown" => $enableMarkdown,
         "textOnTopLeft" => $textOnTopLeft,
-        "fileDirectory" => $fileDirectory
+        "fileDirectory" => $fileDirectory,
+        "encryptPasswordFrontend" => $encryptPasswordFrontend,
+        "db" => $dbConfig
     ];
 }
 
@@ -108,7 +112,35 @@ function getFullHostName(): string
     return $result . $_SERVER['SERVER_NAME'] . ':' . $_SERVER["SERVER_PORT"] . '/';
 }
 
-class MySQL extends mysqli {
+class UserRole
+{
+    const Guest = "Guest";
+    const User = "User";
+    const Admin = "Admin";
+}
+
+class User {
+    var int $id;
+    var string $username;
+    var string $password_hash;
+    var string $salt;
+    var string $role;
+    var string $token;
+    var int $token_expire;
+
+    function __construct(int $id, string $username, string $password_hash, string $salt, string $role, string $token, int $token_expire)
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->password_hash = $password_hash;
+        $this->salt = $salt;
+        $this->role = $role;
+        $this->token = $token;
+        $this->token_expire = $token_expire;
+    }
+}
+
+class DBConnection extends mysqli {
 
     /**
      * @throws Exception
@@ -119,6 +151,7 @@ class MySQL extends mysqli {
         if ($this->connect_error) {
             throw new Exception("MySQL Connection Error: " . $this->connect_error);
         }
+        $this->createTables();
     }
 
     public function __destruct()
@@ -126,4 +159,101 @@ class MySQL extends mysqli {
         $this->close();
     }
 
+    public function createTables() {
+        $this->query("CREATE TABLE IF NOT EXISTS `users` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `username` varchar(255) NOT NULL,
+            `password_hash` varchar(255) NOT NULL,
+            `salt` varchar(255) NOT NULL,
+            `role` varchar(255) NOT NULL,
+            `token` varchar(255) NOT NULL,
+            `token_expire` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+        /*
+        $this->query("CREATE TABLE IF NOT EXISTS `files` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) NOT NULL,
+            `path` varchar(255) NOT NULL,
+            `upload_time` int(11) NOT NULL,
+            `upload_user` varchar(255) NOT NULL,
+            PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+        */
+    }
+
+    public function createUser($username, $password, $role): User {
+        $salt = bin2hex(random_bytes(16));
+        $password_hash = hash("sha256", $password . $salt);
+        $token = bin2hex(random_bytes(32));
+        $token_expire = time() + 5184000; // 60 days
+        $stmt = $this->prepare("INSERT INTO users (username, password_hash, salt, role, token, token_expire) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $username, $password_hash, $salt, $role, $token, $token_expire);
+        $stmt->execute();
+        $stmt->close();
+        return new User($this->insert_id, $username, $password_hash, $salt, $role, $token, $token_expire);
+    }
+
+    public function getUser($username): ?object
+    {
+        $stmt = $this->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        if ($result->num_rows > 0) {
+            return $result->fetch_object();
+        }
+        return null;
+    }
+
+    public function getUserByToken($token): ?object
+    {
+        $stmt = $this->prepare("SELECT * FROM users WHERE token = ?");
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        if ($result->num_rows > 0) {
+            return $result->fetch_object();
+        }
+        return null;
+    }
+
+}
+
+/**
+ * @throws Exception
+ */
+function login($username, $password): ?User
+{
+    $db = new DBConnection(config->db->host, config->db->user, config->db->password, config->db->database);
+    $user = $db->getUser($username);
+    if ($user === null) {
+        throw new Exception("User $username is not found");
+    }
+    $password_hash = hash("sha256", $password . $user->salt);
+    if ($password_hash === $user->password_hash) {
+        $token = bin2hex(random_bytes(32));
+        $token_expire = time() + 5184000; // 60 days
+        $stmt = $db->prepare("UPDATE users SET token = ?, token_expire = ? WHERE id = ?");
+        $stmt->bind_param("sii", $token, $token_expire, $user->id);
+        $stmt->execute();
+        $stmt->close();
+        return new User($user->id, $user->username, $user->password_hash, $user->salt, $user->role, $token, $token_expire);
+    }
+    throw new Exception("Password is incorrect");
+}
+
+/**
+ * @throws Exception
+ */
+function register($username, $password, $role): ?User
+{
+    $db = new DBConnection(config->db->host, config->db->user, config->db->password, config->db->database);
+    $user = $db->getUser($username);
+    if ($user !== null) {
+        throw new Exception("User $username already exists");
+    }
+    return $db->createUser($username, $password, $role);
 }

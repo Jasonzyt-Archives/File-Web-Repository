@@ -25,6 +25,15 @@
     "Click to change the code": "点击更换验证码",
     "Doesn't have an account? Register.": "还没有账号? 注册一个",
     "Have an account? Sign in.": "已有账号? 直接登录",
-    "Confirm Password": "确认密码"
+    "Confirm Password": "确认密码",
+    "Failed to login!": "登录失败!",
+    "Username is required": "用户名不能为空",
+    "Password is required": "密码不能为空",
+    "Password is incorrect": "密码不正确",
+    "Verification code is required": "验证码不能为空",
+    "Verification code is incorrect": "验证码不正确",
+    "Passwords do not match": "两次输入的密码不一致",
+    "regex:User (.+) is not found": "用户 $1 未找到",
+    "regex:User (.+) already exists": "用户 $1 已存在"
   }
 }

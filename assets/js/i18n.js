@@ -20,14 +20,12 @@ function _autoTranslate(className, prop) {
                     key = key.substring(6);
                     let reg = new RegExp(key);
                     if (reg.test(text) && text.match(reg) !== null) {
-                        console.log(text);
                         let res = reg.exec(text);
                         if (res != null) {
                             let val = lang["regex:" + key];
                             for (let i = 0; i < res.length; i++) {
                                 val = val.replace("$" + i, res[i]);
                             }
-                            console.log(val);
                             el[prop] = val;
                             break;
                         }

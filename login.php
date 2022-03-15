@@ -2,9 +2,66 @@
 
 include "api/internal.php";
 
+session_start();
+$loginErrorOccurred = $registerErrorOccurred = false;
+$loginErrorMsg = $registerErrorMsg = "None";
 if (isset($_POST['type'])) {
     if ($_POST['type'] == "login") {
-
+        if (!isset($_POST["username"])) {
+            $loginErrorMsg = "Username is required";
+            $loginErrorOccurred = true;
+        } else if (!isset($_POST["password"])) {
+            $loginErrorMsg = "Password is required";
+            $loginErrorOccurred = true;
+        } else if (!isset($_POST["verification"])) {
+            $loginErrorMsg = "Verification code is required";
+            $loginErrorOccurred = true;
+        } else if (strtolower($_POST["verification"]) != strtolower($_SESSION["captcha"])) {
+            $loginErrorMsg = "Verification code is incorrect";
+            $loginErrorOccurred = true;
+        }
+        if (!$loginErrorOccurred) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            try {
+                $user = login($username, $password);
+                setcookie("token", $user->token, $user->token_expire, "/");
+            } catch (Exception $e) {
+                $loginErrorMsg = $e->getMessage();
+                $loginErrorOccurred = true;
+            }
+        }
+    } else if ($_POST['type'] == "register") {
+        if (!isset($_POST["username"])) {
+            $registerErrorMsg = "Username is required";
+            $registerErrorOccurred = true;
+        } else if (!isset($_POST["password"])) {
+            $registerErrorMsg = "Password is required";
+            $registerErrorOccurred = true;
+        } else if (!isset($_POST["password2"])) {
+            $registerErrorMsg = "Password confirmation is required";
+            $registerErrorOccurred = true;
+        } else if (!isset($_POST["verification"])) {
+            $registerErrorMsg = "Verification code is required";
+            $registerErrorOccurred = true;
+        } else if (strtolower($_POST["verification"]) != strtolower($_SESSION["captcha"])) {
+            $registerErrorMsg = "Verification code is incorrect";
+            $registerErrorOccurred = true;
+        } else if ($_POST["password"] != $_POST["password2"]) {
+            $registerErrorMsg = "Passwords do not match";
+            $registerErrorOccurred = true;
+        }
+        if (!$registerErrorOccurred) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            try {
+                $user = register($username, $password, "User");
+                setcookie("token", $user->token, $user->token_expire, "/");
+            } catch (Exception $e) {
+                $registerErrorMsg = $e->getMessage();
+                $registerErrorOccurred = true;
+            }
+        }
     }
 }
 
@@ -32,6 +89,25 @@ if (isset($_POST['type'])) {
 <?php include "assets/svg/icon.svg" ?>
 
 <div id="random-bg" style="position: absolute"></div>
+<?php
+if ($loginErrorOccurred) {
+    echo <<<EOT
+        <div id="alert-bar" class="alert alert-danger text-center" role="alert" style="z-index: 11;">
+            <strong class="i18n">Failed to login!</strong>
+            <p class="i18n" style="margin: 0">$loginErrorMsg</p>
+        </div>
+EOT;
+}
+if ($registerErrorOccurred) {
+    echo <<<EOT
+        <div id="alert-bar" class="alert alert-danger text-center" role="alert" style="z-index: 11;">
+            <strong class="i18n">Failed to register!</strong>
+            <p class="i18n" style="margin: 0">$registerErrorMsg</p>
+        </div>
+EOT;
+}
+?>
+
 <section class="spad">
     <div class="text-center">
         <form id="login-form" method="post" action="">
@@ -43,7 +119,7 @@ if (isset($_POST['type'])) {
             <input type="password" name="password" placeholder="Password" class="form-control placeholder-i18n" required autocomplete/>
             <svg><use xlink:href="#Captcha"/></svg>
             <input type="text" name="verification" placeholder="Verification Code" class="form-control placeholder-i18n" required>
-                <img src="api/captcha.php" alt="Verification Code" class="captcha title-i18n" title="Click to change the code" onclick="changeVerificationCode()"/>
+                <img alt="Verification Code" class="captcha title-i18n" title="Click to change the code" onclick="changeVerificationCode()"/>
             </input>
             <input type="submit" value="Login" class="btn btn-primary btn-block value-i18n"/>
             <span>
@@ -61,7 +137,7 @@ if (isset($_POST['type'])) {
             <input type="password" name="password2" placeholder="Confirm Password" class="form-control placeholder-i18n" required autocomplete/>
             <svg><use xlink:href="#Captcha"/></svg>
             <input type="text" name="verification" placeholder="Verification Code" class="form-control placeholder-i18n" required>
-                <img src="api/captcha.php" alt="Verification Code" class="captcha title-i18n" title="Click to change the code" onclick="changeVerificationCode()"/>
+                <img alt="Verification Code" class="captcha title-i18n" title="Click to change the code" onclick="changeVerificationCode()"/>
             </input>
             <input type="submit" value="Register" class="btn btn-primary btn-block value-i18n"/>
             <span>
@@ -106,51 +182,93 @@ if (isset($_POST['type'])) {
         };
         req.send();
     };
+    // Alert bar
+    setTimeout(() => {
+        let el = document.getElementById("alert-bar");
+        if (el) {
+            el.classList.add("fade-out")
+        }
+    }, 5000);
     // Register or Login
     let isLogin = true;
+    let loginForm = document.getElementById("login-form");
+    let registerForm = document.getElementById("register-form");
     if (window.location.hash === "#register") {
         displayRegister();
     } else {
         displayLogin();
     }
-    let form = document.getElementById(isLogin ? "login-form" : "register-form");
-    let formX = form.offsetLeft;
-    let formY = form.offsetTop;
-    let mouseX = 0;
-    let mouseY = 0;
-    form.onmousedown = (ev) => {
-        formX = form.offsetLeft;
-        formY = form.offsetTop;
-        mouseX = ev.clientX;
-        mouseY = ev.clientY;
-    };
-    form.onmousemove = (ev) => {
-        if (ev.buttons === 1) {
-            form.style.left = (formX + ev.clientX - mouseX) + "px";
-            form.style.top = (formY + ev.clientY - mouseY) + "px";
+    setMovable(loginForm);
+    setMovable(registerForm);
+    doEncryptWhenSubmit(loginForm);
+    doEncryptWhenSubmit(registerForm);
+
+    let encrypted = {};
+    function doEncryptWhenSubmit(form) {
+        form.onsubmit = () => {
+            if (encrypted[form] === true) {
+                return true;
+            }
+            let els = form.getElementsByTagName("input");
+            for (let i = 0; i < els.length; i++) {
+                if (els[i].name === "password" || els[i].name === "password2") {
+                    doSha256(els[i].value).then(hash => {
+                        els[i].value = hash;
+                        encrypted[form] = true;
+                        form.submit();
+                    });
+                }
+            }
+            return false;
         }
-    };
-    form.onmouseup = (ev) => {
-        formX = form.offsetLeft;
-        formY = form.offsetTop;
-        mouseX = ev.clientX;
-        mouseY = ev.clientY;
-    };
+    }
+
+    // Set the form movable
+    function setMovable(form) {
+        let formX = form.offsetLeft;
+        let formY = form.offsetTop;
+        let mouseX = 0;
+        let mouseY = 0;
+        form.onmousedown = (ev) => {
+            formX = form.offsetLeft;
+            formY = form.offsetTop;
+            mouseX = ev.clientX;
+            mouseY = ev.clientY;
+            form.style.cursor = "move";
+        };
+        form.onmousemove = (ev) => {
+            if (ev.buttons === 1) {
+                form.style.left = (formX + ev.clientX - mouseX) + "px";
+                form.style.top = (formY + ev.clientY - mouseY) + "px";
+            }
+        };
+        form.onmouseup = (ev) => {
+            formX = form.offsetLeft;
+            formY = form.offsetTop;
+            mouseX = ev.clientX;
+            mouseY = ev.clientY;
+            form.style.cursor = "default";
+        };
+    }
     // Display login form
     function displayLogin() {
-        document.getElementById("register-form").style.display = "none";
-        document.getElementById("login-form").style.display = "block";
+        registerForm.style.display = "none";
+        loginForm.style.display = "block";
+        getElementByAbbribute(loginForm, "input", "name", "username").focus();
+        loginForm.getElementsByTagName("img")[0].src = "api/captcha.php";
         isLogin = true;
     }
     // Display register form
     function displayRegister() {
-        document.getElementById("login-form").style.display = "none";
-        document.getElementById("register-form").style.display = "block";
+        loginForm.style.display = "none";
+        registerForm.style.display = "block";
+        getElementByAbbribute(registerForm, "input", "name", "username").focus();
+        registerForm.getElementsByTagName("img")[0].src = "api/captcha.php";
         isLogin = false;
     }
     // Change verification code
     function changeVerificationCode() {
-        document.getElementsByClassName("captcha")[0].src = `api/captcha.php?${Math.random()}`;
+        (isLogin ? loginForm : registerForm).src = `api/captcha.php?${Math.random()}`;
     }
     // Convert em to pixel
     function em2pixel(element, em = 1) {
@@ -269,6 +387,25 @@ if (isset($_POST['type'])) {
             let rgb = getImageMainColor(bgImg, x < 0 ? 0 : x, y < 0 ? 0 : y, w, h);
             bgCopyright.style.color = invertColor(rgb, true);
         }
+    }
+    function doSha256(str) {
+        // https://remarkablemark.medium.com/how-to-generate-a-sha-256-hash-with-javascript-d3b2696382fd
+        const utf8 = new TextEncoder().encode(str);
+        return crypto.subtle.digest('SHA-256', utf8).then((hashBuffer) => {
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray
+                .map((bytes) => bytes.toString(16).padStart(2, '0'))
+                .join('');
+        });
+    }
+    function getElementByAbbribute(el, tag, attr, value) {
+        let elements = el.getElementsByTagName(tag);
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].getAttribute(attr) === value) {
+                return elements[i];
+            }
+        }
+        return null;
     }
 </script>
 
