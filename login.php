@@ -16,6 +16,9 @@ if (isset($_POST['type'])) {
         } else if (!isset($_POST["verification"])) {
             $loginErrorMsg = "Verification code is required";
             $loginErrorOccurred = true;
+        } else if (!checkUsername($_POST['username'])) {
+            $loginErrorMsg = "Username contains illegal characters";
+            $loginErrorOccurred = true;
         } else if (strtolower($_POST["verification"]) != strtolower($_SESSION["captcha"])) {
             $loginErrorMsg = "Verification code is incorrect";
             $loginErrorOccurred = true;
@@ -26,6 +29,7 @@ if (isset($_POST['type'])) {
             try {
                 $user = login($username, $password);
                 setcookie("token", $user->token, $user->token_expire, "/");
+                header("Location: index.php");
             } catch (Exception $e) {
                 $loginErrorMsg = $e->getMessage();
                 $loginErrorOccurred = true;
@@ -44,6 +48,9 @@ if (isset($_POST['type'])) {
         } else if (!isset($_POST["verification"])) {
             $registerErrorMsg = "Verification code is required";
             $registerErrorOccurred = true;
+        } else if (!checkUsername($_POST['username'])) {
+            $loginErrorMsg = "Username contains illegal characters";
+            $loginErrorOccurred = true;
         } else if (strtolower($_POST["verification"]) != strtolower($_SESSION["captcha"])) {
             $registerErrorMsg = "Verification code is incorrect";
             $registerErrorOccurred = true;
@@ -55,8 +62,9 @@ if (isset($_POST['type'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
             try {
-                $user = register($username, $password, "User");
+                $user = register($username, $password, "");
                 setcookie("token", $user->token, $user->token_expire, "/");
+                header("Location: index.php");
             } catch (Exception $e) {
                 $registerErrorMsg = $e->getMessage();
                 $registerErrorOccurred = true;
@@ -114,7 +122,13 @@ EOT;
             <h1 class="i18n" style="margin-bottom: 0.6em;">Login</h1>
             <input type="hidden" name="type" value="login"/>
             <svg style="margin-top: 0.3em"><use xlink:href="#Username"/></svg>
-            <input type="text" name="username" placeholder="Username" class="form-control placeholder-i18n" required/>
+            <input type="text" name="username" placeholder="Username" class="form-control placeholder-i18n"
+                <?php
+                if ($loginErrorOccurred && isset($_POST["username"])) {
+                    echo "value=\"${$_POST['username']}\"";
+                }
+                ?>
+                   required/>
             <svg><use xlink:href="#Password"/></svg>
             <input type="password" name="password" placeholder="Password" class="form-control placeholder-i18n" required autocomplete/>
             <svg><use xlink:href="#Captcha"/></svg>
@@ -130,7 +144,13 @@ EOT;
             <h1 class="i18n" style="margin-bottom: 0.6em;">Register</h1>
             <input type="hidden" name="type" value="register"/>
             <svg style="margin-top: 0.3em"><use xlink:href="#Username"/></svg>
-            <input type="text" name="username" placeholder="Username" class="form-control placeholder-i18n" required/>
+            <input type="text" name="username" placeholder="Username" class="form-control placeholder-i18n"
+                <?php
+                if ($registerErrorOccurred && isset($_POST["username"])) {
+                    echo "value=\"{$_POST['username']}\"";
+                }
+                ?>
+                   required/>
             <svg><use xlink:href="#Password"/></svg>
             <input type="password" name="password" placeholder="Password" class="form-control placeholder-i18n" required autocomplete/>
             <svg><use xlink:href="#Password"/></svg>
@@ -193,7 +213,7 @@ EOT;
     let isLogin = true;
     let loginForm = document.getElementById("login-form");
     let registerForm = document.getElementById("register-form");
-    if (window.location.hash === "#register") {
+    if (window.location.hash === "#register" || <?php echo $registerErrorOccurred ? "true" : "false"; ?>) {
         displayRegister();
     } else {
         displayLogin();

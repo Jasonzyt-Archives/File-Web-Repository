@@ -33,6 +33,7 @@
     "Verification code is required": "验证码不能为空",
     "Verification code is incorrect": "验证码不正确",
     "Passwords do not match": "两次输入的密码不一致",
+    "Username contains illegal characters": "用户名包含非法字符",
     "regex:User (.+) is not found": "用户 $1 未找到",
     "regex:User (.+) already exists": "用户 $1 已存在"
   }

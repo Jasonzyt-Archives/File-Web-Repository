@@ -16,6 +16,11 @@ $previewFiles = [
     "doc", "docx", "docm", "dot", "dotx", "dotm", "pdf", "ppt", "pptx", "pptm", "potx", "potm",
     "pot", "ppsx", "ppsm", "ppa", "ppam", "xls", "xlsx", "xlsm", "xltx", "xltm", "xlt", "xlsb"
 ];
+
+const IllegalCharsInUsername = [
+    "\\", "/", ":", "*", "?", "'", "\"", "<", ">", "|", "&"
+];
+
 define("config", getConfig());
 
 function getConfig(): object
@@ -112,29 +117,31 @@ function getFullHostName(): string
     return $result . $_SERVER['SERVER_NAME'] . ':' . $_SERVER["SERVER_PORT"] . '/';
 }
 
-class UserRole
+function checkUsername($username): bool
 {
-    const Guest = "Guest";
-    const User = "User";
-    const Admin = "Admin";
+    foreach (IllegalCharsInUsername as $char) {
+        if (mb_strpos($username, $char) !== false) return false;
+    }
+    return true;
 }
+
 
 class User {
     var int $id;
     var string $username;
     var string $password_hash;
     var string $salt;
-    var string $role;
+    var string $groups;
     var string $token;
     var int $token_expire;
 
-    function __construct(int $id, string $username, string $password_hash, string $salt, string $role, string $token, int $token_expire)
+    function __construct(int $id, string $username, string $password_hash, string $salt, string $groups, string $token, int $token_expire)
     {
         $this->id = $id;
         $this->username = $username;
         $this->password_hash = $password_hash;
         $this->salt = $salt;
-        $this->role = $role;
+        $this->groups = $groups;
         $this->token = $token;
         $this->token_expire = $token_expire;
     }
@@ -162,10 +169,10 @@ class DBConnection extends mysqli {
     public function createTables() {
         $this->query("CREATE TABLE IF NOT EXISTS `users` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
-            `username` varchar(255) NOT NULL,
+            `username` varchar(255) UNIQUE NOT NULL,
             `password_hash` varchar(255) NOT NULL,
             `salt` varchar(255) NOT NULL,
-            `role` varchar(255) NOT NULL,
+            `groups` varchar(255) NOT NULL DEFAULT '',
             `token` varchar(255) NOT NULL,
             `token_expire` int(11) NOT NULL,
             PRIMARY KEY (`id`)
@@ -182,16 +189,16 @@ class DBConnection extends mysqli {
         */
     }
 
-    public function createUser($username, $password, $role): User {
+    public function createUser($username, $password, $groups): User {
         $salt = bin2hex(random_bytes(16));
         $password_hash = hash("sha256", $password . $salt);
         $token = bin2hex(random_bytes(32));
         $token_expire = time() + 5184000; // 60 days
-        $stmt = $this->prepare("INSERT INTO users (username, password_hash, salt, role, token, token_expire) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssi", $username, $password_hash, $salt, $role, $token, $token_expire);
+        $stmt = $this->prepare("INSERT INTO users (username, password_hash, salt, `groups`, token, token_expire) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssi", $username, $password_hash, $salt, $groups, $token, $token_expire);
         $stmt->execute();
         $stmt->close();
-        return new User($this->insert_id, $username, $password_hash, $salt, $role, $token, $token_expire);
+        return new User($this->insert_id, $username, $password_hash, $salt, $groups, $token, $token_expire);
     }
 
     public function getUser($username): ?object
@@ -240,7 +247,7 @@ function login($username, $password): ?User
         $stmt->bind_param("sii", $token, $token_expire, $user->id);
         $stmt->execute();
         $stmt->close();
-        return new User($user->id, $user->username, $user->password_hash, $user->salt, $user->role, $token, $token_expire);
+        return new User($user->id, $user->username, $user->password_hash, $user->salt, $user->groups, $token, $token_expire);
     }
     throw new Exception("Password is incorrect");
 }
@@ -248,12 +255,12 @@ function login($username, $password): ?User
 /**
  * @throws Exception
  */
-function register($username, $password, $role): ?User
+function register($username, $password, $groups): ?User
 {
     $db = new DBConnection(config->db->host, config->db->user, config->db->password, config->db->database);
     $user = $db->getUser($username);
     if ($user !== null) {
         throw new Exception("User $username already exists");
     }
-    return $db->createUser($username, $password, $role);
+    return $db->createUser($username, $password, $groups);
 }
